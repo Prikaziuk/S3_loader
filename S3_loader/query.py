@@ -18,17 +18,15 @@ URL = 'https://scihub.copernicus.eu/dhus/search'
 MAX_N_IMAGES_IN_REQUEST = 100
 
 
-def query_copernicus(product_type, period, point, auth):
+def find_images(product_type, period, point, auth) -> dict:
     results = {'uuids': [],
                'names': [],
                'dates': [],
                'sizes': [],
                'n_images': 0}
 
-    check_product_type(product_type)
-    date_start, date_end = parse_period(period)
-    lat, lon = parse_point(point)
-    results['point'] = (lat, lon)
+    date_start, date_end = period
+    lat, lon = point
 
     q = [
         f'producttype:{product_type}',
@@ -47,7 +45,6 @@ def query_copernicus(product_type, period, point, auth):
         return results
 
     results, n_images = parse_request_response(content, results)
-    results['n_images'] = n_images
     if n_images == 0:
         logger.warning(f'Query returned no results.\n{url_query}')
 

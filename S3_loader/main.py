@@ -25,9 +25,9 @@ import logging
 
 from pathlib import Path
 
-from S3_loader.checker import check_point_db
+from S3_loader.checker import check_product_type, parse_period, parse_point, check_point_in_db
 from S3_loader.database import Database
-from S3_loader.query import query_copernicus
+from S3_loader.query import find_images
 from S3_loader.download import download_parallel
 
 
@@ -38,28 +38,22 @@ with open('../.config', 'r') as json_file:
 AUTH = (CONFIG['DHUS_USERNAME'], CONFIG['DHUS_PASSWORD'])
 
 
-def query(product_type, period, point, database_path):
-    if Path(database_path).is_file():
-        db = Database(database_path)
-        check_point_db(db, point)
-        db.conn.close()
-
-    results = query_copernicus(product_type, period, point, auth=AUTH)
-    n_images = results['n_images'] 
-    if n_images != 0:
-        db = Database(database_path)
-        db.create_points_table()
-        db.insert_point(point)
-        db.create_products_table(product_type)
-        results['point_id'] = [db.get_point_id(point)] * n_images
-        db.insert_results(results, product_type)
-        db.conn.close()
+def images2db(images, product_type, point, database_path):
+    db = Database(database_path)
+    db.create_points_table()
+    db.insert_point(point)
+    db.create_products_table(product_type)
+    images['point_id'] = [db.get_point_id(point)] * images['n_images']
+    db.insert_images(images, product_type)
+    db.conn.close()
+    logging.info(f'Images successfully inserted into {product_type} table of {database_path}')
 
 
 def download(product_type, period, point, database_path, load_dir_path=None):
     if not Path(database_path).is_file():
         logging.info(f'No database file has been found, querying and creating one')
-        query(product_type, period, point, database_path)
+        images = find_images(product_type, period, point, AUTH)
+        images2db(images, product_type, point, database_path)
 
     db = Database(database_path)
     uuids_names = db.select_uuids_names(product_type, period)
@@ -67,7 +61,9 @@ def download(product_type, period, point, database_path, load_dir_path=None):
         logging.info(f'no products to download have been found in the database {database_path} ' +
                      f'for specified product type {product_type}, period {period}' + '\n' +
                      'Querying Copernicus to see if they exist at all...')
-        query(product_type, period, point, database_path)
+        images = find_images(product_type, period, point, AUTH)
+        images2db(images, product_type, point, database_path)
+
         uuids_names = db.select_uuids_names(product_type, period)
         assert len(uuids_names) != 0, \
             f'no products found in the database for specified product type {product_type}, period {period}'
@@ -86,8 +82,15 @@ def download(product_type, period, point, database_path, load_dir_path=None):
 
 if __name__ == '__main__':
     PRODUCT_TYPE = 'OL_1_EFR___'
-    PERIOD = ('2020-09-01', '2020-09-12')
+    PERIOD = ('2020-08-01', '2020-08-10')
     POINT = (56.46, 7.57)
     DATABASE_PATH = '../test.db'
-    query(product_type=PRODUCT_TYPE, period=PERIOD, point=POINT, database_path=DATABASE_PATH)
+
+    check_product_type(PRODUCT_TYPE)
+    PERIOD = parse_period(PERIOD)
+    POINT = parse_point(POINT)
+    check_point_in_db(DATABASE_PATH, POINT)
+
+    images_dict = find_images(product_type=PRODUCT_TYPE, period=PERIOD, point=POINT, auth=AUTH)
+    images2db(images=images_dict, product_type=PRODUCT_TYPE, point=POINT, database_path=DATABASE_PATH)
     # download(PRODUCT_TYPE, PERIOD, POINT, DATABASE_PATH)

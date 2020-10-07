@@ -1,7 +1,5 @@
 import sqlite3
 
-from S3_loader.checker import parse_period, parse_point
-
 
 class Database:
     def __init__(self, database_path):
@@ -32,7 +30,7 @@ class Database:
                 """
             )
 
-    def insert_results(self, results, product_type):
+    def insert_images(self, results, product_type):
         with self.conn:
             self.c.executemany(
                 f"""
@@ -46,7 +44,7 @@ class Database:
     def select_uuids_names(self, product_type, period=None):
         q = f"SELECT uuid, name FROM {product_type}"
         if period is not None:
-            date_start, date_end = parse_period(period)
+            date_start, date_end = period
             q += f" WHERE datetime BETWEEN '{date_start}' AND '{date_end}'"
         self.c.execute(q)
         return self.c.fetchall()
@@ -87,7 +85,7 @@ class Database:
             )
 
     def insert_point(self, point):
-        lat, lon = parse_point(point)
+        lat, lon = point
         with self.conn:
             self.c.execute(
                 """
@@ -103,7 +101,7 @@ class Database:
         return self.c.fetchone()[0]
 
     def get_point_id(self, point):
-        lat, lon = parse_point(point)
+        lat, lon = point
         self.c.execute(f"SELECT point_id FROM points WHERE lat = {lat} AND lon = {lon}")
         point_id = self.c.fetchone()
         if point_id is not None:

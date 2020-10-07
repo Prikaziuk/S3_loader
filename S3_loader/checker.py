@@ -1,5 +1,7 @@
 from datetime import datetime, timezone
+from pathlib import Path
 
+from S3_loader.database import Database
 
 PRODUCT_TYPES = [
     'SR_1_SRA___', 'SR_1_SRA_A', 'SR_1_SRA_BS', 'SR_2_LAN___',
@@ -27,14 +29,17 @@ def parse_period(period):
         date_end = utcformat(date_end)
     elif period_len == 1:
         date_start = utcformat(datetime.strptime(period[0], format_in))
-        date_end = 'NOW'
+        date_end = utcformat(datetime.now())  # 'NOW'
     else:
         raise Exception(f'period has incorrect length. Expected 1 or 2, got {period_len}, {period}')
     return date_start, date_end
 
 
 def utcformat(dt, timespec='milliseconds'):
-    """convert datetime to string in UTC format (YYYY-mm-ddTHH:MM:SS.mmmZ)"""
+    """
+    convert datetime to string in UTC format (YYYY-mm-ddTHH:MM:SS.mmmZ)
+    function from https://stackoverflow.com/a/63627585 by Sam
+    """
     iso_str = dt.astimezone(timezone.utc).isoformat('T', timespec)
     return iso_str.replace('+00:00', 'Z')
 
@@ -52,9 +57,12 @@ def parse_point(point):
     return lat, lon
 
 
-def check_point_db(db, point):
-    if db.table_exists('points'):
-        if db.count_points() != 0:
-            point_id = db.get_point_id(point)
-            assert point_id is not None, 'An attempt to use two different geo-points within the same database. ' + \
-                                         'Please, use different databases for different points.'
+def check_point_in_db(database_path, point):
+    if Path(database_path).is_file():
+        db = Database(database_path)
+        if db.table_exists('points'):
+            if db.count_points() != 0:
+                point_id = db.get_point_id(point)
+                assert point_id is not None, 'An attempt to use two different geo-points within the same database. ' + \
+                                             'Please, use different databases for different points.'
+        db.conn.close()
