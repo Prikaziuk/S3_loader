@@ -7,10 +7,22 @@ This script automates the per-point search and download of ESA Sentinel-3 images
 - Level-1 and Atmosphere Archive & Distribution System Distributed Active Archive Center (LAADS DAAC) https://ladsweb.modaps.eosdis.nasa.gov (National Aeronautics and Space Administration, NASA)
 
 ## Input:
-- coordinates of a point
 - product type
 - dates of acquisition
-- credentials for DHUS
+- coordinates of a point
+
+
+## Credentials
+DHUS and DAAC require authorization  that should be provided in ``.config`` file in the root:
+```
+{
+	"DHUS_USERNAME": "username", 
+	"DHUS_PASSWORD": "password",
+	"DAAC_API_KEY": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+}
+```
+``DAAC_API_KEY`` can be generated on https://ladsweb.modaps.eosdis.nasa.gov/profile/#app-keys.
+ESA Sentinel-3 End User License Agreement should be accepted by ticking "Yes, I Agree to ESA Sentinel-3 End User License Agreement." at the end of the page https://urs.earthdata.nasa.gov/profile/edit
 
 ## Use cases:
 1. Query for product names and unique identifiers (uuid)

@@ -99,22 +99,24 @@ def make_url_daac(name):
 
 
 def is_md5_ok(content, uuid, auth):
-    md5_ok = False
     if content is None:
-        return md5_ok
+        return False
+
     url = URL_DHUS + f"Products('{uuid}')/Checksum/Value/$value"
     md5_content, tried = get_request(url, auth)
     if md5_content is None:
         logger.warning(f'MD5 sums were not downloaded after {tried} attempts')
-        return md5_ok
+        return False
+
     loaded_md5 = hashlib.md5(content).hexdigest()
     expected_md5 = md5_content.decode('utf-8').lower()
-    if loaded_md5 == expected_md5:
-        md5_ok = True
-    return md5_ok
+    return loaded_md5 == expected_md5
 
 
 def chunks(lst, n):
-    """Yield successive n-sized chunks from lst."""
+    """
+    Yield successive n-sized chunks from lst.
+    function from https://stackoverflow.com/a/312464 by Ned Batchelder
+    """
     for i in range(0, len(lst), n):
         yield lst[i:i + n]

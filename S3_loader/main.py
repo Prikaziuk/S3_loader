@@ -10,14 +10,12 @@ required:
         SL_1_RBT___, SL_2_LST___,
         SY_2_SYN___, SY_2_V10___, SY_2_VG1___, SY_2_VGP___
 
-    period: (start_date, end_date) %Y%m%d
+    period: (start_date, end_date) %Y-%m-%d
     point: (lat, lon)
-    auth: (username, password)
 
 optional:
     database_path: str
     load_dir_path: str
-    daac_api_key: str
 
 
 (c) Prikaziuk 2020, prikaziuk@gmail.com
@@ -42,7 +40,10 @@ AUTH = (CONFIG['DHUS_USERNAME'], CONFIG['DHUS_PASSWORD'])
 
 def query(product_type, period, point, database_path):
     if Path(database_path).is_file():
-        check_point_db(Database(database_path), point)
+        db = Database(database_path)
+        check_point_db(db, point)
+        db.conn.close()
+
     results = query_copernicus(product_type, period, point, auth=AUTH)
     n_images = results['n_images'] 
     if n_images != 0:
@@ -52,12 +53,14 @@ def query(product_type, period, point, database_path):
         db.create_products_table(product_type)
         results['point_id'] = [db.get_point_id(point)] * n_images
         db.insert_results(results, product_type)
+        db.conn.close()
 
 
 def download(product_type, period, point, database_path, load_dir_path=None):
     if not Path(database_path).is_file():
         logging.info(f'No database file has been found, querying and creating one')
         query(product_type, period, point, database_path)
+
     db = Database(database_path)
     uuids_names = db.select_uuids_names(product_type, period)
     if len(uuids_names) == 0:
@@ -68,14 +71,17 @@ def download(product_type, period, point, database_path, load_dir_path=None):
         uuids_names = db.select_uuids_names(product_type, period)
         assert len(uuids_names) != 0, \
             f'no products found in the database for specified product type {product_type}, period {period}'
+
     if load_dir_path is None:
         load_dir_path = Path('..', product_type)
     load_dir_path = Path(load_dir_path)
     load_dir_path.mkdir(exist_ok=True, parents=True)
+
     # TODO names are not unique +/- 1 second etc, ask the user which to load
     download_parallel(uuids_names, load_dir_path,
                       auth=AUTH, api_key=CONFIG['DAAC_API_KEY'], parallel=False)
     # TODO database add-ons: set loaded, set online
+    db.conn.close()
 
 
 if __name__ == '__main__':

@@ -59,7 +59,7 @@ def query_copernicus(product_type, period, point, auth):
             logger.error(f'Failed to get query {url_query} after {tried} attempts')
             continue
         results, _ = parse_request_response(content, results)
-    logging.info(f'query succeeded: found {n_images}')
+    logging.info(f'query succeeded: found {n_images} images')
     results['n_images'] = n_images
     return results
 
