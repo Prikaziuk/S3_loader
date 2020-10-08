@@ -29,13 +29,9 @@ from S3_loader.checker import check_product_type, parse_period, parse_point, che
 from S3_loader.database import Database
 from S3_loader.query import find_images
 from S3_loader.download import download_parallel
-
+import S3_loader.config as config
 
 logging.basicConfig(level=logging.INFO)
-
-with open('../.config', 'r') as json_file:
-    CONFIG = json.load(json_file)
-AUTH = (CONFIG['DHUS_USERNAME'], CONFIG['DHUS_PASSWORD'])
 
 
 def images2db(images, product_type, point, database_path):
@@ -52,7 +48,7 @@ def images2db(images, product_type, point, database_path):
 def download(product_type, period, point, database_path, load_dir_path=None):
     if not Path(database_path).is_file():
         logging.info(f'No database file has been found, querying and creating one')
-        images = find_images(product_type, period, point, AUTH)
+        images = find_images(product_type, period, point, config.AUTH)
         images2db(images, product_type, point, database_path)
 
     db = Database(database_path)
@@ -61,7 +57,7 @@ def download(product_type, period, point, database_path, load_dir_path=None):
         logging.info(f'no products to download have been found in the database {database_path} ' +
                      f'for specified product type {product_type}, period {period}' + '\n' +
                      'Querying Copernicus to see if they exist at all...')
-        images = find_images(product_type, period, point, AUTH)
+        images = find_images(product_type, period, point, config.AUTH)
         images2db(images, product_type, point, database_path)
 
         uuids_names = db.select_uuids_names(product_type, period)
@@ -75,22 +71,27 @@ def download(product_type, period, point, database_path, load_dir_path=None):
 
     # TODO names are not unique +/- 1 second etc, ask the user which to load
     download_parallel(uuids_names, load_dir_path,
-                      auth=AUTH, api_key=CONFIG['DAAC_API_KEY'], parallel=False)
+                      auth=config.AUTH, api_key=config.DAAC_API_KEY, parallel=True)
     # TODO database add-ons: set loaded, set online
+    # TODO daac exists without download: requests.head(url, headers=headers).ok
     db.conn.close()
 
 
 if __name__ == '__main__':
     PRODUCT_TYPE = 'OL_1_EFR___'
-    PERIOD = ('2020-08-01', '2020-08-10')
-    POINT = (56.46, 7.57)
+    PERIOD = ('2018-12-19', '2018-12-29')
+    POINT = (52.25, 5.69)
     DATABASE_PATH = '../test.db'
+    PRODUCT_TYPE = 'OL_1_EFR___'
+    POINT = (52.251185, 5.690051)
+    PERIOD = ('2016-01-19', '2020-09-13')
+    DATABASE_PATH = '../NL_Spe_olci_nrt.db'
 
     check_product_type(PRODUCT_TYPE)
     PERIOD = parse_period(PERIOD)
     POINT = parse_point(POINT)
     check_point_in_db(DATABASE_PATH, POINT)
 
-    images_dict = find_images(product_type=PRODUCT_TYPE, period=PERIOD, point=POINT, auth=AUTH)
+    images_dict = find_images(product_type=PRODUCT_TYPE, period=PERIOD, point=POINT, auth=config.AUTH)
     images2db(images=images_dict, product_type=PRODUCT_TYPE, point=POINT, database_path=DATABASE_PATH)
     # download(PRODUCT_TYPE, PERIOD, POINT, DATABASE_PATH)

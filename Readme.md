@@ -13,13 +13,10 @@ This script automates the per-point search and download of ESA Sentinel-3 images
 
 
 ## Credentials
-DHUS and DAAC require authorization  that should be provided in ``.config`` file in the root:
+DHUS and DAAC require authorization  that should be provided in ``S3_loader/S3_loader/config.py`` next to the rest of the code:
 ```
-{
-	"DHUS_USERNAME": "username", 
-	"DHUS_PASSWORD": "password",
-	"DAAC_API_KEY": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
-}
+AUTH = ('username', 'password')
+DAAC_API_KEY = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'
 ```
 ``DAAC_API_KEY`` can be generated on https://ladsweb.modaps.eosdis.nasa.gov/profile/#app-keys.
 ESA Sentinel-3 End User License Agreement should be accepted by ticking "Yes, I Agree to ESA Sentinel-3 End User License Agreement." at the end of the page https://urs.earthdata.nasa.gov/profile/edit

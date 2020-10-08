@@ -31,7 +31,8 @@ def find_images(product_type, period, point, auth) -> dict:
     q = [
         f'producttype:{product_type}',
         f'beginposition:[{date_start} TO {date_end}]',
-        f'footprint:"Intersects({lat}, {lon})"'
+        f'footprint:"Intersects({lat}, {lon})"',
+        'timeliness:"Non Time Critical"'  # "Near Real Time"
     ]
 
     payload = {'q': ' AND '.join(q), 'rows': MAX_N_IMAGES_IN_REQUEST}
@@ -47,6 +48,7 @@ def find_images(product_type, period, point, auth) -> dict:
     results, n_images = parse_request_response(content, results)
     if n_images == 0:
         logger.warning(f'Query returned no results.\n{url_query}')
+    logging.info(f'query succeeded: found {n_images} images')
 
     while n_images - start > 0:
         start += MAX_N_IMAGES_IN_REQUEST
@@ -56,17 +58,17 @@ def find_images(product_type, period, point, auth) -> dict:
             logger.error(f'Failed to get query {url_query} after {tried} attempts')
             continue
         results, _ = parse_request_response(content, results)
-    logging.info(f'query succeeded: found {n_images} images')
     results['n_images'] = n_images
     return results
 
 
 def parse_request_response(content, results):
     root = ET.fromstring(content)
-    n_images = int(root.find('{http://a9.com/-/spec/opensearch/1.1/}totalResults').text)
+    n_images = root.find('{http://a9.com/-/spec/opensearch/1.1/}totalResults').text
+    assert n_images is not None, 'Error in query url, was date parsed correctly?'
     for e in root.findall('{http://www.w3.org/2005/Atom}entry'):
         results['names'].append(e.find('{http://www.w3.org/2005/Atom}title').text)
         results['uuids'].append(e.find('{http://www.w3.org/2005/Atom}id').text)
         results['dates'].append(e.find('./*[@name="beginposition"]').text)
         results['sizes'].append(e.find('./*[@name="size"]').text)
-    return results, n_images
+    return results, int(n_images)
