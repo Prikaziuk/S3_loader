@@ -75,7 +75,7 @@ def download(product_type, period, point, database_path, load_dir_path=None):
     db.close()
 
 
-if __name__ == '__main__':
+def test():
     PRODUCT_TYPE = 'OL_1_EFR___'
     PERIOD = ('2018-12-19', '2018-12-29')
     POINT = (52.25, 5.69)
@@ -89,3 +89,8 @@ if __name__ == '__main__':
     images_dict = find_images(product_type=PRODUCT_TYPE, period=PERIOD, point=POINT, auth=config.AUTH)
     images2db(images=images_dict, product_type=PRODUCT_TYPE, point=POINT, database_path=DATABASE_PATH)
     # download(PRODUCT_TYPE, PERIOD, POINT, DATABASE_PATH)
+
+
+if __name__ == '__main__':
+    test()
+
