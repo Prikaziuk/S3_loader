@@ -7,7 +7,9 @@ from S3_loader.image.utils import intersects
 logging.basicConfig(level=logging.INFO)
 
 
-def extract_dir(load_dir, point, out_dir, graph_path, site_name='test'):
+def extract_dir(load_dir, point, out_dir, graph_path=None, site_name='test'):
+    if graph_path is None:
+        graph_path = os.path.join(os.path.dirname(__file__), 'extract.xml')
     assert os.path.exists(graph_path), f'extraction .xml not found at {graph_path}'
     lat, lon = point
     sources = [os.path.join(load_dir, x) for x in os.listdir(load_dir)

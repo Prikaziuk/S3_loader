@@ -13,7 +13,7 @@ This script automates the per-point search and download of ESA Sentinel-3 images
 
 
 ## Credentials
-DHUS and DAAC require authorization  that should be provided in ``S3_loader/S3_loader/config.py`` next to the rest of the code:
+DHUS and DAAC require authorization  that should be provided in ``S3_loader/config.py`` next to the rest of the code:
 ```
 AUTH = ('username', 'password')
 DAAC_API_KEY = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'
