@@ -46,8 +46,9 @@ def get_offset_deg_from_km(lat_deg, distance_km):
     return offset_lat, offset_lon
 
 
-def intersects(product_dir_path, lat, lon):
+def intersects(product_dir_path, point):
     # read geometry from xml with ET
+    lat, lon = point
     root = ET.parse(product_dir_path / 'xfdumanifest.xml')
     footprint = root.find(r'metadataSection/metadataObject/metadataWrap/xmlData/'
                           r'{http://www.esa.int/safe/sentinel/1.1}frameSet/'
