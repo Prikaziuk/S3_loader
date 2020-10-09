@@ -4,7 +4,6 @@ import xml.etree.ElementTree as ET
 from requests import Request
 
 from S3_loader.get_request import get_request
-from S3_loader.checker import *
 
 # if you want to control logs uncomment these lines
 # import sys
@@ -18,12 +17,15 @@ URL = 'https://scihub.copernicus.eu/dhus/search'
 MAX_N_IMAGES_IN_REQUEST = 100
 
 
-def find_images(product_type, period, point, auth) -> dict:
+def find_images(product_type, period, point, auth, url=URL) -> dict:
     results = {'uuids': [],
                'names': [],
                'dates': [],
                'sizes': [],
-               'n_images': 0}
+               'n_images': 0,
+               'point': point,
+               'product_type': product_type
+               }
 
     date_start, date_end = period
     lat, lon = point
@@ -38,7 +40,7 @@ def find_images(product_type, period, point, auth) -> dict:
     payload = {'q': ' AND '.join(q), 'rows': MAX_N_IMAGES_IN_REQUEST}
 
     start = 0
-    url_query = Request('GET', URL, params=dict(payload, **{'start': start})).prepare().url
+    url_query = Request('GET', url, params=dict(payload, **{'start': start})).prepare().url
     content, tried = get_request(url_query, auth)
 
     if content is None:
@@ -52,7 +54,7 @@ def find_images(product_type, period, point, auth) -> dict:
 
     while n_images - start > 0:
         start += MAX_N_IMAGES_IN_REQUEST
-        url_query = Request('GET', URL, params=dict(payload, **{'start': start})).prepare().url
+        url_query = Request('GET', url, params=dict(payload, **{'start': start})).prepare().url
         content, tried = get_request(url_query, auth)
         if content is None:
             logger.error(f'Failed to get query {url_query} after {tried} attempts')

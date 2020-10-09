@@ -58,11 +58,11 @@ def parse_point(point):
 
 
 def check_point_in_db(database_path, point):
-    if Path(database_path).is_file():
-        db = Database(database_path)
-        if db.table_exists('points'):
-            if db.count_points() != 0:
-                point_id = db.get_point_id(point)
-                assert point_id is not None, 'An attempt to use two different geo-points within the same database. ' + \
-                                             'Please, use different databases for different points.'
-        db.conn.close()
+    db = Database(database_path)
+    if db.table_exists('points') and db.count_points() != 0:
+        point_id = db.get_point_id(point)
+        if point_id is None:
+            raise Exception(f'Database {database_path} already contains a different point from the one you used {point}'
+                            '\nIn order not to mix products from different locations, '
+                            'please, provide a new database filename')
+    db.conn.close()

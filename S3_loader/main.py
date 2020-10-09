@@ -20,16 +20,14 @@ optional:
 
 (c) Prikaziuk 2020, prikaziuk@gmail.com
 """
-import json
 import logging
-
 from pathlib import Path
 
+import S3_loader.config as config
 from S3_loader.checker import check_product_type, parse_period, parse_point, check_point_in_db
 from S3_loader.database import Database
-from S3_loader.query import find_images
 from S3_loader.download import download_parallel
-import S3_loader.config as config
+from S3_loader.query import find_images
 
 logging.basicConfig(level=logging.INFO)
 
