@@ -21,11 +21,13 @@ DAAC_API_KEY = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'
 ``DAAC_API_KEY`` can be generated on https://ladsweb.modaps.eosdis.nasa.gov/profile/#app-keys.
 ESA Sentinel-3 End User License Agreement should be accepted by ticking "Yes, I Agree to ESA Sentinel-3 End User License Agreement." at the end of the page https://urs.earthdata.nasa.gov/profile/edit
 
-## Use cases:
+## User steps:
 1. Query for product names and unique identifiers (uuid)
 2. Download of products:
 	- online products - direct parallel download from Copernicus Open Access Hub
 	- offline products (Long term archive, LTA) - from LAADS DAAC (if available)
+3. Extract pixels from loaded images:
+	- ESA SNAP with Sentinel-3 toolbox is required for this operation: http://step.esa.int/main/download/snap-download/
 
 ## Output:
 - SQLite database file with tables:
@@ -34,6 +36,7 @@ ESA Sentinel-3 End User License Agreement should be accepted by ticking "Yes, I 
 	2. products: name, uuid, size:
 		- individual table for each product type
 - Downloaded products
+- Text files with extracted pixels
 
 
 ## Recommendations

@@ -1,0 +1,34 @@
+  <graph id="someGraphId">
+    <version>1.0</version>
+    <node id="someNodeId">
+      <operator>PixEx</operator>
+		<parameters>
+			<sourceProductPaths>$sources</sourceProductPaths>
+			<exportBands>true</exportBands>
+			<exportTiePoints>true</exportTiePoints>
+			<exportMasks>true</exportMasks>
+			<coordinates>
+				<coordinate>
+					<name>$site</name>
+					<latitude>$lat</latitude>
+					<longitude>$lon</longitude>
+					<originalValues/>
+					<id>0</id>
+				</coordinate>
+			</coordinates>
+			<timeDifference/>
+			<windowSize>1</windowSize>
+			<outputDir>$outdir</outputDir>
+			<outputFilePrefix>$site</outputFilePrefix>
+            <exportExpressionResult>false</exportExpressionResult>
+			<aggregatorStrategyType>no aggregation</aggregatorStrategyType>
+			<exportSubScenes>false</exportSubScenes>
+			<subSceneBorderSize>0</subSceneBorderSize>
+			<exportKmz>false</exportKmz>
+			<extractTimeFromFilename>false</extractTimeFromFilename>
+			<dateInterpretationPattern>yyyyMMdd</dateInterpretationPattern>
+			<filenameInterpretationPattern>*${startDate}*${endDate}*</filenameInterpretationPattern>
+			<includeOriginalInput>false</includeOriginalInput>
+		</parameters>
+    </node>
+  </graph>

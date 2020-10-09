@@ -82,10 +82,6 @@ if __name__ == '__main__':
     PERIOD = ('2018-12-19', '2018-12-29')
     POINT = (52.25, 5.69)
     DATABASE_PATH = '../test.db'
-    PRODUCT_TYPE = 'OL_1_EFR___'
-    POINT = (52.251185, 5.690051)
-    PERIOD = ('2016-01-19', '2020-09-13')
-    DATABASE_PATH = '../NL_Spe_olci_nrt.db'
 
     check_product_type(PRODUCT_TYPE)
     PERIOD = parse_period(PERIOD)
