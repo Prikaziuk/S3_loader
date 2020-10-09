@@ -15,7 +15,7 @@ class S3Loader:
     def __init__(self):
         self.auth = config.AUTH
         self.api_key = config.DAAC_API_KEY
-        self.images = dict()
+        self.images = {}
 
     def query(self, product_type, period, point):
         check_product_type(product_type)
