@@ -1,5 +1,4 @@
 import math
-import os
 import xml.etree.ElementTree as ET
 
 from shapely.geometry import Point, Polygon
@@ -49,7 +48,7 @@ def get_offset_deg_from_km(lat_deg, distance_km):
 
 def intersects(product_dir_path, lat, lon):
     # read geometry from xml with ET
-    root = ET.parse(os.path.join(product_dir_path, 'xfdumanifest.xml'))
+    root = ET.parse(product_dir_path / 'xfdumanifest.xml')
     footprint = root.find(r'metadataSection/metadataObject/metadataWrap/xmlData/'
                           r'{http://www.esa.int/safe/sentinel/1.1}frameSet/'
                           r'{http://www.esa.int/safe/sentinel/1.1}footPrint/'
