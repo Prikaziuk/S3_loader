@@ -1,8 +1,8 @@
 import logging
 
-from S3_loader import config
-from S3_loader.database import Database
-from S3_loader.query import find_images
+from . import config
+from .database import Database
+from .query import find_images
 from .checker import parse_point, parse_period, check_product_type, check_point_in_db
 
 

@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 
 from requests import Request
 
-from S3_loader.get_request import get_request
+from .get_request import get_request
 
 # if you want to control logs uncomment these lines
 # import sys
