@@ -6,6 +6,9 @@ class Database:
         self.conn = sqlite3.connect(database_path)
         self.c = self.conn.cursor()
 
+    def close(self):
+        self.conn.close()
+
     def table_exists(self, table_name):
         q = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}'"
         return len(self.c.execute(q).fetchall()) != 0

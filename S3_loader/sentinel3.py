@@ -37,5 +37,5 @@ class S3Loader:
         db.create_products_table(product_type)
         self.images['point_id'] = [db.get_point_id(point)] * self.images['n_images']
         db.insert_images(self.images, product_type)
-        db.conn.close()
+        db.close()
         logging.info(f'Images successfully inserted into {product_type} table of {db_path}')

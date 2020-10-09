@@ -39,7 +39,7 @@ def images2db(images, product_type, point, database_path):
     db.create_products_table(product_type)
     images['point_id'] = [db.get_point_id(point)] * images['n_images']
     db.insert_images(images, product_type)
-    db.conn.close()
+    db.close()
     logging.info(f'Images successfully inserted into {product_type} table of {database_path}')
 
 
@@ -72,7 +72,7 @@ def download(product_type, period, point, database_path, load_dir_path=None):
                       auth=config.AUTH, api_key=config.DAAC_API_KEY, parallel=True)
     # TODO database add-ons: set loaded, set online
     # TODO daac exists without download: requests.head(url, headers=headers).ok
-    db.conn.close()
+    db.close()
 
 
 if __name__ == '__main__':

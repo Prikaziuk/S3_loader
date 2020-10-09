@@ -65,4 +65,4 @@ def check_point_in_db(database_path, point):
             raise Exception(f'Database {database_path} already contains a different point from the one you used {point}'
                             '\nIn order not to mix products from different locations, '
                             'please, provide a new database filename')
-    db.conn.close()
+    db.close()
