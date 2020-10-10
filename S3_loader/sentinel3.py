@@ -12,30 +12,35 @@ class S3Loader:
     URL_DHUS = 'https://scihub.copernicus.eu/dhus/odata/v1/'
     URL_DAAC = 'https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/450/'
 
-    def __init__(self):
+    def __init__(self, db_path):
+        self.db_path = db_path
+        self.db = Database(db_path)
         self.auth = config.AUTH
         self.api_key = config.DAAC_API_KEY
-        self.images = {}
 
     def query(self, product_type, period, point):
         check_product_type(product_type)
         period = parse_period(period)
         point = parse_point(point)
-        self.images = find_images(product_type, period, point, self.auth, self.URL_QUERY)
+        check_point_in_db(self.db, point)
+        images = find_images(product_type, period, point, self.auth, self.URL_QUERY)
+        self._images2db(images)
 
-    def images2db(self, db_path):
-        if len(self.images) == 0:
-            raise Exception(f'Do not see any images, please, launch the query first: `S3Loader.query()`')
+    def _images2db(self, images):
+        point = images['point']
+        product_type = images['product_type']
+        self.db.create_points_table()
+        self.db.insert_point(point)
+        self.db.create_products_table(product_type)
+        images['point_id'] = [self.db.get_point_id(point)] * images['n_images']
+        self.db.insert_images(images, product_type)
+        logging.info(f'Images successfully inserted into {product_type} table of {self.db_path}')
 
-        point = self.images['point']
-        check_point_in_db(db_path, point)
+    def _download(self):
+        pass
 
-        product_type = self.images['product_type']
-        db = Database(db_path)
-        db.create_points_table()
-        db.insert_point(point)
-        db.create_products_table(product_type)
-        self.images['point_id'] = [db.get_point_id(point)] * self.images['n_images']
-        db.insert_images(self.images, product_type)
-        db.close()
-        logging.info(f'Images successfully inserted into {product_type} table of {db_path}')
+    def download_names(self, names, db_path=None):
+        pass
+
+    def download_period(self, period, db_path=None):
+        pass

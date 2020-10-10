@@ -57,12 +57,10 @@ def parse_point(point):
     return lat, lon
 
 
-def check_point_in_db(database_path, point):
-    db = Database(database_path)
+def check_point_in_db(db, point):
     if db.table_exists('points') and db.count_points() != 0:
         point_id = db.get_point_id(point)
         if point_id is None:
-            raise Exception(f'Database {database_path} already contains a different point from the one you used {point}'
+            raise Exception(f'Database already contains a different point from the one you used {point}'
                             '\nIn order not to mix products from different locations, '
                             'please, provide a new database filename')
-    db.close()
