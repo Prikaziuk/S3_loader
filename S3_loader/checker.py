@@ -1,7 +1,4 @@
 from datetime import datetime, timezone
-from pathlib import Path
-
-from .database import Database
 
 PRODUCT_TYPES = [
     'SR_1_SRA___', 'SR_1_SRA_A', 'SR_1_SRA_BS', 'SR_2_LAN___',

@@ -16,7 +16,6 @@ class S3Loader:
 
     def __init__(self, db_path):
         self.db_path = db_path
-        self.db = Database(db_path)
         self.auth = config.AUTH
         self.api_key = config.DAAC_API_KEY
 
@@ -24,20 +23,25 @@ class S3Loader:
         check_product_type(product_type)
         period = parse_period(period)
         point = parse_point(point)
-        check_point_in_db(self.db, point)
+
+        db = Database(self.db_path)
+        check_point_in_db(db, point)
+        db.close()
 
         images = find_images(product_type, period, point, self.auth, self.URL_QUERY)
         self._images2db(images)
 
     def _images2db(self, images):
+        db = Database(self.db_path)
         point = images['point']
-        self.db.create_points_table()
-        self.db.insert_point(point)
+        db.create_points_table()
+        db.insert_point(point)
 
         product_type = images['product_type']
-        self.db.create_products_table(product_type)
-        images['point_id'] = [self.db.get_point_id(point)] * images['n_images']
-        self.db.insert_images(images, product_type)
+        db.create_products_table(product_type)
+        images['point_id'] = [db.get_point_id(point)] * images['n_images']
+        db.insert_images(images, product_type)
+        db.close()
         logging.info(f'Images successfully inserted into {product_type} table of {self.db_path}')
 
     def download(self, product_type, load_dir=None, names=None, period=None, parallel=False):
@@ -47,7 +51,9 @@ class S3Loader:
         if names is not None:
             names = parse_names(names)
 
-        uuids_names = self.db.select_uuids_names(product_type, period, names)
+        db = Database(self.db_path)
+        uuids_names = db.select_uuids_names(product_type, period, names)
+        db.close()
         if len(uuids_names) == 0:
             err_msg = f'no products found in the database table {product_type} (==product type)'
             if period is not None:
