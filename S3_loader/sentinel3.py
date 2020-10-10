@@ -1,9 +1,11 @@
 import logging
+from pathlib import Path
 
 from . import config
+from .checker import parse_point, parse_period, check_product_type, check_point_in_db, parse_names
 from .database import Database
 from .query import find_images
-from .checker import parse_point, parse_period, check_product_type, check_point_in_db
+from .download import download_parallel
 
 
 class S3Loader:
@@ -23,24 +25,48 @@ class S3Loader:
         period = parse_period(period)
         point = parse_point(point)
         check_point_in_db(self.db, point)
+
         images = find_images(product_type, period, point, self.auth, self.URL_QUERY)
         self._images2db(images)
 
     def _images2db(self, images):
         point = images['point']
-        product_type = images['product_type']
         self.db.create_points_table()
         self.db.insert_point(point)
+
+        product_type = images['product_type']
         self.db.create_products_table(product_type)
         images['point_id'] = [self.db.get_point_id(point)] * images['n_images']
         self.db.insert_images(images, product_type)
         logging.info(f'Images successfully inserted into {product_type} table of {self.db_path}')
 
-    def _download(self):
+    def download(self, product_type, load_dir=None, names=None, period=None, parallel=False):
+        check_product_type(product_type)
+        if period is not None:
+            period = parse_period(period)
+        if names is not None:
+            names = parse_names(names)
+
+        uuids_names = self.db.select_uuids_names(product_type, period, names)
+        if len(uuids_names) == 0:
+            err_msg = f'no products found in the database table {product_type} (==product type)'
+            if period is not None:
+                err_msg += f' for the period {period}'
+            if names is not None:
+                err_msg += f', names did not match any of the {len(names)} product names provided'
+            raise Exception(err_msg)
+        logging.info(f'Found {len(uuids_names)} products to download. Expected different number - redo the query')
+
+        if load_dir is None:
+            load_dir = product_type
+        load_dir = Path(load_dir)
+        load_dir.mkdir(exist_ok=True, parents=True)
+        logging.info(f'Images will be downloaded to {load_dir}')
+
+        download_parallel(uuids_names, load_dir, auth=self.auth, api_key=self.api_key, parallel=parallel)
+
+    def is_online(self):
         pass
 
-    def download_names(self, names, db_path=None):
-        pass
-
-    def download_period(self, period, db_path=None):
+    def is_on_daac(self):
         pass

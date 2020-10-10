@@ -44,11 +44,15 @@ class Database:
                 zip(results['uuids'], results['names'], results['dates'], results['sizes'], results['point_id'])
             )
 
-    def select_uuids_names(self, product_type, period=None):
+    def select_uuids_names(self, product_type, period=None, names=None):
         q = f"SELECT uuid, name FROM {product_type}"
         if period is not None:
             date_start, date_end = period
             q += f" WHERE datetime BETWEEN '{date_start}' AND '{date_end}'"
+            if names is not None:
+                q += f" AND name IN {tuple(names)}"
+        elif names is not None:
+            q += f" WHERE name IN {tuple(names)}"
         self.c.execute(q)
         return self.c.fetchall()
 
