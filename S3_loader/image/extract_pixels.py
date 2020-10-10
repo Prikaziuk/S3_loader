@@ -21,9 +21,9 @@ def extract_dir(load_dir, point, out_dir, graph_path=None, filename='test'):
 
     if len(sources_lst) > 100:
         n_batches = 5
-        for j, sources_batch in enumerate(chunks(sources_lst, n_batches)):
+        for j, sources_batch in enumerate(n_chunks(sources_lst, n_batches)):
             n_processes = 5
-            batches = [(f'{filename}_{j}_{i}', batch) for i, batch in enumerate(chunks(sources_batch, n_processes))]
+            batches = [(f'{filename}_{j}_{i}', batch) for i, batch in enumerate(n_chunks(sources_batch, n_processes))]
             with Pool(n_processes) as p:
                 p.map(partial(extract, point=point, out_dir=out_dir, graph_path=graph_path), batches)
     else:
@@ -45,7 +45,7 @@ def extract(batch, point, out_dir, graph_path):
     logging.info(f'Successfully extracted {point} to {out_dir}')
 
 
-def chunks(lst, n):
+def n_chunks(lst, n):
     """
     Yield n number of striped chunks from lst
     function from https://stackoverflow.com/a/54802737 by Jurgen Strydom

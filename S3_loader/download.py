@@ -21,7 +21,7 @@ def download_parallel(uuids_names, load_dir_path, auth, api_key=None, parallel=F
     tmp_path1 = load_dir_path / 'tmp'
     tmp_path2 = load_dir_path / 'tmp2'
     if parallel:
-        for i, pair in enumerate(chunks(uuids_names, 2)):
+        for i, pair in enumerate(chunks_of_n(uuids_names, 2)):
             logger.info(f'{(i + 1) * 2} / {len(uuids_names)}')
             if len(pair) == 2:
                 (uuid1, name1), (uuid2, name2) = pair
@@ -112,7 +112,7 @@ def is_md5_ok(content, uuid, auth):
     return loaded_md5 == expected_md5
 
 
-def chunks(lst, n):
+def chunks_of_n(lst, n):
     """
     Yield successive n-sized chunks from lst.
     function from https://stackoverflow.com/a/312464 by Ned Batchelder
