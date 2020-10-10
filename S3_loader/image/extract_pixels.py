@@ -20,11 +20,12 @@ def extract_dir(load_dir, point, out_dir, graph_path=None, filename='test'):
     Path(out_dir).mkdir(parents=True, exist_ok=True)
 
     if len(sources_lst) > 100:
-        n_batches = 10
-        sources_batch = chunks(sources_lst, n_batches)
-        batches = [(f'{filename}_{i}', batch) for i, batch in enumerate(sources_batch)]
-        with Pool(n_batches) as p:
-            p.map(partial(extract, point=point, out_dir=out_dir, graph_path=graph_path), batches)
+        n_batches = 5
+        for j, sources_batch in enumerate(chunks(sources_lst, n_batches)):
+            n_processes = 5
+            batches = [(f'{filename}_{j}_{i}', batch) for i, batch in enumerate(chunks(sources_batch, n_processes))]
+            with Pool(n_processes) as p:
+                p.map(partial(extract, point=point, out_dir=out_dir, graph_path=graph_path), batches)
     else:
         extract((filename, sources_lst), point, out_dir, graph_path)
 
