@@ -1,5 +1,6 @@
 import logging
 import xml.etree.ElementTree as ET
+from urllib.parse import urljoin
 
 from requests import Request
 
@@ -11,7 +12,7 @@ from .get_request import get_request
 logger = logging.getLogger()
 
 
-URL = 'https://scihub.copernicus.eu/dhus/search'
+URL = 'https://scihub.copernicus.eu/dhus/'
 
 
 MAX_N_IMAGES_IN_REQUEST = 100
@@ -40,8 +41,9 @@ def find_images(product_type, period, point, web) -> dict:
     payload = {'q': ' AND '.join(q), 'rows': MAX_N_IMAGES_IN_REQUEST}
 
     start = 0
-    url_query = Request('GET', web.url_query, params=dict(payload, start=start)).prepare().url
-    content, tried = get_request(url_query, web.auth_query)
+    url_dhus_search = urljoin(web.url_dhus, 'search')
+    url_query = Request('GET', url_dhus_search, params=dict(payload, start=start)).prepare().url
+    content, tried = get_request(url_query, web.auth_dhus)
 
     if content is None:
         logger.error(f'Failed to get query {url_query} after {tried} attempts')
@@ -54,8 +56,8 @@ def find_images(product_type, period, point, web) -> dict:
 
     while n_images - start > 0:
         start += MAX_N_IMAGES_IN_REQUEST
-        url_query = Request('GET', web.url_query, params=dict(payload, start=start)).prepare().url
-        content, tried = get_request(url_query, web.auth_query)
+        url_query = Request('GET', url_dhus_search, params=dict(payload, start=start)).prepare().url
+        content, tried = get_request(url_query, web.auth_dhus)
         if content is None:
             logger.error(f'Failed to get query {url_query} after {tried} attempts')
             continue

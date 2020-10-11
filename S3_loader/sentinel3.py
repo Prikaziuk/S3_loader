@@ -8,19 +8,17 @@ from .database import Database
 from .download import download_parallel
 from .query import find_images
 
-Web = namedtuple('Web', ['url_query', 'auth_query', 'url_dhus', 'auth_dhus', 'url_daac', 'api_key_daac'])
+Web = namedtuple('Web', ['url_dhus', 'auth_dhus', 'url_daac', 'api_key_daac'])
 
 
 class S3Loader:
-    URL_QUERY = 'https://scihub.copernicus.eu/dhus/search'
-    # URL download
-    URL_DHUS = 'https://scihub.copernicus.eu/dhus/odata/v1/'
+    # URL_DHUS = 'https://colhub.met.no/'
+    URL_DHUS = 'https://scihub.copernicus.eu/dhus/'
     URL_DAAC = 'https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/450/'
 
     def __init__(self, db_path):
         self.db_path = db_path
-        self.web = Web(url_query=self.URL_QUERY, auth_query=config.AUTH,
-                       url_dhus=self.URL_DHUS, auth_dhus=config.AUTH,
+        self.web = Web(url_dhus=self.URL_DHUS, auth_dhus=config.AUTH,
                        url_daac=self.URL_DAAC, api_key_daac=config.DAAC_API_KEY)
 
     def query(self, product_type, period, point):

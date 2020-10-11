@@ -37,8 +37,8 @@ def get_request(url, auth, tmp_path=None, headers=None):
                 if r.status_code == 500:
                     logger.critical('Internal server error. Rethrowing is useless')
                     return loaded, tried
-                if r.status_code in (403, 404):
-                    logger.critical('404: Rethrowing is useless')
+                if r.status_code in (400, 403, 404):
+                    logger.critical(f'{r.status_code}: Rethrowing is useless')
                     return loaded, tried
                 logger.warning('Status code {}. Sleeping for SLEEP_NOT_OK time {}s'.format(r.status_code, SLEEP_NOT_OK))
                 time.sleep(SLEEP_NOT_OK)

@@ -5,6 +5,7 @@ import zipfile
 from datetime import datetime
 from multiprocessing import Pool
 from pathlib import Path
+from urllib.parse import urljoin
 
 from .get_request import get_request
 
@@ -13,7 +14,7 @@ from .get_request import get_request
 # logging.basicConfig(stream=sys.stdout, level=logging.INFO)  # default logging.WARNING
 logger = logging.getLogger()
 
-URL_DHUS = 'https://scihub.copernicus.eu/dhus/odata/v1/'
+URL_DHUS = 'https://scihub.copernicus.eu/dhus/'
 URL_DAAC = 'https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/450/'
 
 
@@ -45,7 +46,7 @@ def download_single_product(uuid, name, load_dir_path, tmp_path, web):
         return loaded
     if is_online(uuid, web.auth_dhus, web.url_dhus):
         logger.info(f'Started downloading {name} from DHUS')
-        url = web.url_dhus + f"Products('{uuid}')/$value"
+        url = urljoin(web.url_dhus, f"odata/v1/Products('{uuid}')/$value")
         content, tried = get_request(url, web.auth_dhus, tmp_path)
     else:
         logger.warning(f'Product {name} is offline in ESA Long term archive LTA')
@@ -83,7 +84,7 @@ def download_single_product(uuid, name, load_dir_path, tmp_path, web):
 
 def is_online(uuid, auth, url_dhus):
     online = False
-    url = url_dhus + f"Products('{uuid}')/Online/$value"
+    url = urljoin(url_dhus, f"odata/v1/Products('{uuid}')/Online/$value")
     res, _ = get_request(url, auth)
     if res is not None:
         online = (res == b'true')
@@ -96,14 +97,14 @@ def make_url_daac(name, url_daac=URL_DAAC):
     date = datetime.strptime(name[16:31], '%Y%m%dT%H%M%S')
     year = date.strftime('%Y')
     doy = date.strftime('%j')
-    return url_daac + '/'.join([product_type, year, doy, name+'.zip'])
+    return urljoin(url_daac, '/'.join([product_type, year, doy, name+'.zip']))
 
 
 def is_md5_ok(content, uuid, auth, url_dhus):
     if content is None:
         return False
 
-    url = url_dhus + f"Products('{uuid}')/Checksum/Value/$value"
+    url = urljoin(url_dhus, f"odata/v1/Products('{uuid}')/Checksum/Value/$value")
     md5_content, tried = get_request(url, auth)
     if md5_content is None:
         logger.warning(f'MD5 sums were not downloaded after {tried} attempts')
