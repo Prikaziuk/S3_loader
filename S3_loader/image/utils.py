@@ -48,7 +48,6 @@ def get_offset_deg_from_km(lat_deg, distance_km):
 
 def intersects(product_dir_path, point):
     # read geometry from xml with ET
-    lat, lon = point
     root = ET.parse(product_dir_path / 'xfdumanifest.xml')
     footprint = root.find(r'metadataSection/metadataObject/metadataWrap/xmlData/'
                           r'{http://www.esa.int/safe/sentinel/1.1}frameSet/'
@@ -57,4 +56,5 @@ def intersects(product_dir_path, point):
     # check intersection of geometry with polygon (site centre is better)
     # lon, lat
     polygon = [[float(footprint[i + 1]), float(footprint[i])] for i in range(0, len(footprint), 2)]
-    return Polygon(polygon).contains(Point(lon, lat))
+    # att! lon, lat format, not lat, lon 
+    return Polygon(polygon).contains(Point(point.lon, point.lat))

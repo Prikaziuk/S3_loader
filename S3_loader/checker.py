@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from collections import namedtuple
 
 PRODUCT_TYPES = [
     'SR_1_SRA___', 'SR_1_SRA_A', 'SR_1_SRA_BS', 'SR_2_LAN___',
@@ -51,7 +52,8 @@ def parse_point(point):
     if not isinstance(lon, (int, float)):
         lon = float(lon)
     assert -180 < lon < 180, f'strange longitude {lon}, expected it to be in range [-180, 180]'
-    return lat, lon
+    Point = namedtuple('Point', ['lat', 'lon'])
+    return Point(lat=lat, lon=lon)
 
 
 def check_point_in_db(db, point):
