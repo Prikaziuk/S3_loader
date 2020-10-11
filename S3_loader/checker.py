@@ -8,6 +8,8 @@ PRODUCT_TYPES = [
     'SY_2_SYN___', 'SY_2_V10___', 'SY_2_VG1___', 'SY_2_VGP___'
 ]
 
+Point = namedtuple('Point', ['lat', 'lon'])
+
 
 def check_product_type(product_type):
     assert product_type in PRODUCT_TYPES, f'product type {product_type} is not one of acceptable {PRODUCT_TYPES}'
@@ -52,7 +54,6 @@ def parse_point(point):
     if not isinstance(lon, (int, float)):
         lon = float(lon)
     assert -180 < lon < 180, f'strange longitude {lon}, expected it to be in range [-180, 180]'
-    Point = namedtuple('Point', ['lat', 'lon'])
     return Point(lat=lat, lon=lon)
 
 

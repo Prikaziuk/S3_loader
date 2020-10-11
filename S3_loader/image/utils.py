@@ -56,5 +56,5 @@ def intersects(product_dir_path, point):
     # check intersection of geometry with polygon (site centre is better)
     # lon, lat
     polygon = [[float(footprint[i + 1]), float(footprint[i])] for i in range(0, len(footprint), 2)]
-    # att! lon, lat format, not lat, lon 
+    # att! lon, lat format, not lat, lon
     return Polygon(polygon).contains(Point(point.lon, point.lat))

@@ -65,7 +65,8 @@ def download_single_product(uuid, name, load_dir_path, tmp_path, web):
             logger.warning('DAAC API key was not provided, can not use the alternative DAAC mirror ' +
                            f'to download the offline {name} product')
             return loaded
-    Path(tmp_path).unlink() if Path(tmp_path).exists() else None  # missing_ok=True fails for <= 3.7
+    if Path(tmp_path).exists():
+        Path(tmp_path).unlink()
     if content is None:
         logger.error(f'Was not able to download the product {name} after {tried} attempts')
         return loaded
