@@ -1,3 +1,7 @@
+"""
+Package to query for ESA Sentinel-3 products and download them.
+(c) Prikaziuk 2020, prikaziuk@gmail.com
+"""
 import logging
 from collections import namedtuple
 from pathlib import Path
