@@ -76,5 +76,9 @@ class S3Loader:
     def is_online(self):
         pass
 
+    def is_available(self):
+        # for alternative links Online is not an option, but sometimes 500 is returned
+        pass
+
     def is_on_daac(self):
         pass
