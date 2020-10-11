@@ -52,6 +52,8 @@ class Database:
             if names is not None:
                 q += f" AND name IN {tuple(names)}"
         elif names is not None:
+            if len(names) == 1:
+                names = list(names) + ['']  # otherwise sqlite 'IN' fails
             q += f" WHERE name IN {tuple(names)}"
         self.c.execute(q)
         return self.c.fetchall()

@@ -7,7 +7,6 @@ PRODUCT_TYPES = [
     'SY_2_SYN___', 'SY_2_V10___', 'SY_2_VG1___', 'SY_2_VGP___'
 ]
 
-PRODUCT_NAME_LEN = 94
 
 def check_product_type(product_type):
     assert product_type in PRODUCT_TYPES, f'product type {product_type} is not one of acceptable {PRODUCT_TYPES}'
@@ -69,6 +68,4 @@ def parse_names(names):
         raise Exception('Names should be List or tuple')
     if len(names) == 0:
         names = None
-    elif len(names) == 1:
-        names = list(names) + ['']  # otherwise sqlite 'IN' fails
     return names
