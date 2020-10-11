@@ -17,7 +17,7 @@ URL = 'https://scihub.copernicus.eu/dhus/search'
 MAX_N_IMAGES_IN_REQUEST = 100
 
 
-def find_images(product_type, period, point, auth, url=URL) -> dict:
+def find_images(product_type, period, point, web) -> dict:
     results = {'uuids': [],
                'names': [],
                'dates': [],
@@ -40,8 +40,8 @@ def find_images(product_type, period, point, auth, url=URL) -> dict:
     payload = {'q': ' AND '.join(q), 'rows': MAX_N_IMAGES_IN_REQUEST}
 
     start = 0
-    url_query = Request('GET', url, params=dict(payload, start=start)).prepare().url
-    content, tried = get_request(url_query, auth)
+    url_query = Request('GET', web.url_query, params=dict(payload, start=start)).prepare().url
+    content, tried = get_request(url_query, web.auth_query)
 
     if content is None:
         logger.error(f'Failed to get query {url_query} after {tried} attempts')
@@ -54,8 +54,8 @@ def find_images(product_type, period, point, auth, url=URL) -> dict:
 
     while n_images - start > 0:
         start += MAX_N_IMAGES_IN_REQUEST
-        url_query = Request('GET', url, params=dict(payload, start=start)).prepare().url
-        content, tried = get_request(url_query, auth)
+        url_query = Request('GET', web.url_query, params=dict(payload, start=start)).prepare().url
+        content, tried = get_request(url_query, web.auth_query)
         if content is None:
             logger.error(f'Failed to get query {url_query} after {tried} attempts')
             continue

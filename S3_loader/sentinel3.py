@@ -1,11 +1,14 @@
 import logging
+from collections import namedtuple
 from pathlib import Path
 
 from . import config
 from .checker import parse_point, parse_period, check_product_type, check_point_in_db, parse_names
 from .database import Database
-from .query import find_images
 from .download import download_parallel
+from .query import find_images
+
+Web = namedtuple('Web', ['url_query', 'auth_query', 'url_dhus', 'auth_dhus', 'url_daac', 'api_key_daac'])
 
 
 class S3Loader:
@@ -16,8 +19,9 @@ class S3Loader:
 
     def __init__(self, db_path):
         self.db_path = db_path
-        self.auth = config.AUTH
-        self.api_key = config.DAAC_API_KEY
+        self.web = Web(url_query=self.URL_QUERY, auth_query=config.AUTH,
+                       url_dhus=self.URL_DHUS, auth_dhus=config.AUTH,
+                       url_daac=self.URL_DAAC, api_key_daac=config.DAAC_API_KEY)
 
     def query(self, product_type, period, point):
         check_product_type(product_type)
@@ -28,7 +32,7 @@ class S3Loader:
         check_point_in_db(db, point)
         db.close()
 
-        images = find_images(product_type, period, point, self.auth, self.URL_QUERY)
+        images = find_images(product_type, period, point, self.web)
         self._images2db(images)
 
     def _images2db(self, images):
@@ -69,7 +73,7 @@ class S3Loader:
         load_dir.mkdir(exist_ok=True, parents=True)
         logging.info(f'Images will be downloaded to {load_dir}')
 
-        download_parallel(uuids_names, load_dir, auth=self.auth, api_key=self.api_key, parallel=parallel)
+        download_parallel(uuids_names, load_dir, self.web, parallel=parallel)
 
     def is_online(self):
         pass
