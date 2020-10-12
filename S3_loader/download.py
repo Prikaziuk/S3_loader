@@ -44,13 +44,13 @@ def download_single_product(uuid, name, load_dir_path, tmp_path, web):
         logger.info(f'Product {name}.SEN3 has already been downloaded to {load_dir_path}')
         loaded = True
         return loaded
-    online = is_online(uuid, web.auth_dhus, web.url_dhus)
+    online_applicable, online = is_online(uuid, web.auth_dhus, web.url_dhus)
     content, tried = None, None
-    if online or (online is None):
+    if online or (not online_applicable):
         logger.info(f'Started downloading {name} from DHUS')
         url = urljoin(web.url_dhus, f"odata/v1/Products('{uuid}')/$value")
         content, tried = get_request(url, web.auth_dhus, tmp_path)
-    if (online is False) or (content is None):
+    if (not online) or (content is None):
         if online is False:
             logger.warning(f'Product {name} is offline in ESA Long term archive LTA')
         if web.api_key_daac:
@@ -86,12 +86,15 @@ def download_single_product(uuid, name, load_dir_path, tmp_path, web):
 
 
 def is_online(uuid, auth, url_dhus):
-    online = None
+    online_applicable = True
+    online = False
     url = urljoin(url_dhus, f"odata/v1/Products('{uuid}')/Online/$value")
     res, _ = get_request(url, auth)
     if res is not None:
         online = (res == b'true')
-    return online
+    else:
+        online_applicable = False
+    return online_applicable, online
 
 
 def make_url_daac(name, url_daac=URL_DAAC):

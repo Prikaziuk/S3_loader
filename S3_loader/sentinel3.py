@@ -17,6 +17,7 @@ Web = namedtuple('Web', ['url_dhus', 'auth_dhus', 'url_daac', 'api_key_daac'])
 
 class S3Loader:
     # URL_DHUS = 'https://colhub.met.no/'
+    # URL_DHUS = 'https://coda.eumetsat.int/'
     URL_DHUS = 'https://scihub.copernicus.eu/dhus/'
     URL_DAAC = 'https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/450/'
 
