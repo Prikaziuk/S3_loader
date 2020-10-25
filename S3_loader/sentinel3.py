@@ -78,6 +78,8 @@ class S3Loader:
 
         download_parallel(uuids_names, load_dir, self.web, parallel=parallel)
 
+    # TODO with s = requests.Session(), s.auth=auth(), s.get is 30% faster than individual requests.get()
+
     def is_online(self):
         pass
 

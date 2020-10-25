@@ -15,7 +15,7 @@ def subset_slstr_cmd(products_in, subset_out, point, subset_graph, reader):
     lat, lon = point
     wkt4subset = make_polygon_wkt(lat, lon, km_shift=3)
     for file in Path(products_in).glob('*'):
-        if intersects(file, lat, lon):
+        if intersects(file, point):
             log = subset_out.with_suffix('.log')
             with open(log, 'wb') as out:
                 subprocess.call(['gpt', subset_graph,

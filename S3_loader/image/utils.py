@@ -1,3 +1,4 @@
+import logging
 import math
 import xml.etree.ElementTree as ET
 
@@ -48,7 +49,11 @@ def get_offset_deg_from_km(lat_deg, distance_km):
 
 def intersects(product_dir_path, point):
     # read geometry from xml with ET
-    root = ET.parse(product_dir_path / 'xfdumanifest.xml')
+    footprint_file = product_dir_path / 'xfdumanifest.xml'
+    if not footprint_file.exists():
+        logging.warning(f'Was not able to verify it the image intersects the point, left it to SNAP')
+        return True
+    root = ET.parse(footprint_file)
     footprint = root.find(r'metadataSection/metadataObject/metadataWrap/xmlData/'
                           r'{http://www.esa.int/safe/sentinel/1.1}frameSet/'
                           r'{http://www.esa.int/safe/sentinel/1.1}footPrint/'

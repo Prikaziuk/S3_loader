@@ -23,14 +23,15 @@ def download_parallel(uuids_names, load_dir_path, web, parallel=False):
     tmp_path2 = load_dir_path / 'tmp2'
     if parallel:
         for i, pair in enumerate(chunks_of_n(uuids_names, 2)):
-            logger.info(f'{(i + 1) * 2} / {len(uuids_names)}')
             if len(pair) == 2:
+                logger.info(f'{(i + 1) * 2} / {len(uuids_names)}')
                 (uuid1, name1), (uuid2, name2) = pair
                 with Pool(2) as p:
                     p.starmap(download_single_product, [(uuid1, name1, load_dir_path, tmp_path1, web),
                                                         (uuid2, name2, load_dir_path, tmp_path2, web)])
             else:
-                uuid, name = pair
+                logger.info(f'{i * 2 + 1} / {len(uuids_names)}')
+                uuid, name = pair.pop()
                 download_single_product(uuid, name, load_dir_path, tmp_path1, web)
     else:
         for i, (uuid, name) in enumerate(uuids_names):

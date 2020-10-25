@@ -3,4 +3,4 @@
 **/
 *.db
 S3_loader/config.py
-test.py
+/*.py
