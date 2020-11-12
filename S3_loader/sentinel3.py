@@ -6,13 +6,25 @@ import logging
 from collections import namedtuple
 from pathlib import Path
 
+import requests
+import logging
+
 from . import config
 from .checker import parse_point, parse_period, check_product_type, check_point_in_db, parse_names
 from .database import Database
-from .download import download_parallel, daac_url_exists
+from .download import download_parallel, make_url_daac
 from .query import find_images
 
 Web = namedtuple('Web', ['url_dhus', 'auth_dhus', 'url_daac', 'api_key_daac'])
+
+HEADERS = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' +
+                      'AppleWebKit/537.36 (KHTML, like Gecko) ' +
+                      'Chrome/70.0.3538.77 ' +
+                      'Safari/537.36 ' +
+                      'Edg/79.0.309.43',
+        'Authorization': ''
+    }
 
 
 class S3Loader:
@@ -89,7 +101,12 @@ class S3Loader:
 
     def is_on_daac(self, product_type, period=None, names=None):
         db = Database(self.db_path)
+        s = requests.Session()
+        s.headers = HEADERS
+        s.headers['Authorization'] = f'Bearer {self.web.api_key_daac}'
         uuids_names = db.select_uuids_names(product_type, period, names)
         for uuid, name in uuids_names:
-            if daac_url_exists(name, self.web):
+            url = make_url_daac(name, self.web.url_daac)
+            logging.info(f'Checking if {name} is on DAAC')
+            if s.head(url).ok:
                 db.set_on_daac(product_type, uuid)
