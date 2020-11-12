@@ -12,7 +12,7 @@ import requests
 from . import config
 from .checker import parse_point, parse_period, check_product_type, check_point_in_db, parse_names
 from .database import Database
-from .download import download_parallel, is_online, make_url_daac
+from .download import download_parallel, make_url_daac
 from .query import find_images
 
 Web = namedtuple('Web', ['url_dhus', 'auth_dhus', 'url_daac', 'api_key_daac'])
@@ -92,7 +92,7 @@ class S3Loader:
 
     # TODO with s = requests.Session(), s.auth=auth(), s.get is 30% faster than individual requests.get()
 
-    def is_offline(self, product_type, period=None, names=None):
+    def set_offline(self, product_type, period=None, names=None):
         db = Database(self.db_path)
         s = requests.Session()
         s.auth = self.web.auth_dhus
@@ -107,7 +107,7 @@ class S3Loader:
         # for alternative links Online is not an option, but sometimes 500 is returned
         pass
 
-    def is_on_daac(self, product_type, period=None, names=None):
+    def set_on_daac(self, product_type, period=None, names=None):
         db = Database(self.db_path)
         s = requests.Session()
         s.headers = HEADERS
