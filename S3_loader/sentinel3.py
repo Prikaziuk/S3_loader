@@ -5,14 +5,14 @@ Package to query for ESA Sentinel-3 products and download them.
 import logging
 from collections import namedtuple
 from pathlib import Path
+from urllib.parse import urljoin
 
 import requests
-import logging
 
 from . import config
 from .checker import parse_point, parse_period, check_product_type, check_point_in_db, parse_names
 from .database import Database
-from .download import download_parallel, make_url_daac
+from .download import download_parallel, is_online, make_url_daac
 from .query import find_images
 
 Web = namedtuple('Web', ['url_dhus', 'auth_dhus', 'url_daac', 'api_key_daac'])
@@ -28,9 +28,9 @@ HEADERS = {
 
 
 class S3Loader:
-    # URL_DHUS = 'https://colhub.met.no/'
+    URL_DHUS = 'https://colhub.met.no/'
     # URL_DHUS = 'https://coda.eumetsat.int/'
-    URL_DHUS = 'https://scihub.copernicus.eu/dhus/'
+    # URL_DHUS = 'https://scihub.copernicus.eu/dhus/'
     URL_DAAC = 'https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/450/'
 
     def __init__(self, db_path):
@@ -92,8 +92,16 @@ class S3Loader:
 
     # TODO with s = requests.Session(), s.auth=auth(), s.get is 30% faster than individual requests.get()
 
-    def is_online(self):
-        pass
+    def is_offline(self, product_type, period=None, names=None):
+        db = Database(self.db_path)
+        s = requests.Session()
+        s.auth = self.web.auth_dhus
+        uuids_names = db.select_uuids_names(product_type, period, names)
+        for uuid, _ in uuids_names:
+            url = urljoin(self.web.url_dhus, f"odata/v1/Products('{uuid}')/Online/$value")
+            r = s.get(url)
+            if r.ok and (r.content == b'false'):
+                db.set_offline(product_type, uuid)
 
     def is_available(self):
         # for alternative links Online is not an option, but sometimes 500 is returned

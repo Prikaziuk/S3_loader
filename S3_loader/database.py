@@ -79,15 +79,15 @@ class Database:
     #             """
     #         )
     #
-    # def set_offline(self, uuids, product_type):
-    #     with self.conn:
-    #         self.c.execute(
-    #             f"""
-    #             UPDATE {product_type}
-    #             SET offline = 1
-    #             WHERE uuid in {tuple(uuids + [0])}  -- to remove a warning if tuple has one element (id,)
-    #             """
-    #         )
+    def set_offline(self, product_type, uuid):
+        with self.conn:
+            self.c.execute(
+                f"""
+                UPDATE {product_type}
+                SET offline = 1
+                WHERE uuid = '{uuid}'
+                """
+            )
 
     def create_points_table(self):
         with self.conn:
