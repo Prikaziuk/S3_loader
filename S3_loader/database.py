@@ -27,7 +27,7 @@ class Database:
                 size TEXT,
                 loaded INT,
                 offline INT,
-                in_daac INT,
+                on_daac INT,
                 CONSTRAINT unq UNIQUE(uuid, point_id)
                 ) 
                 """
@@ -57,6 +57,16 @@ class Database:
             q += f" WHERE name IN {tuple(names)}"
         self.c.execute(q)
         return self.c.fetchall()
+
+    def set_on_daac(self, product_type, uuid):
+        with self.conn:
+            self.c.execute(
+                f"""
+                UPDATE {product_type}
+                SET on_daac = 1
+                WHERE uuid = '{uuid}'
+                """
+            )
 
     # def set_loaded(self, load_path, product_type):
     #     # ids = [self.get_prod_id_from_name(x[:-5], instrument) for x in os.listdir(load_path)]  # cut .SEN3 == os.path.splittext()[0]

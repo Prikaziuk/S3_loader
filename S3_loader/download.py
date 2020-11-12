@@ -6,6 +6,7 @@ from datetime import datetime
 from multiprocessing import Pool
 from pathlib import Path
 from urllib.parse import urljoin
+import requests
 
 from .get_request import get_request
 
@@ -105,6 +106,21 @@ def make_url_daac(name, url_daac=URL_DAAC):
     year = date.strftime('%Y')
     doy = date.strftime('%j')
     return urljoin(url_daac, '/'.join([product_type, year, doy, name+'.zip']))
+
+
+def daac_url_exists(name, web):
+    logger.info(f'Checking if {name} is on DAAC')
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' +
+                      'AppleWebKit/537.36 (KHTML, like Gecko) ' +
+                      'Chrome/70.0.3538.77 ' +
+                      'Safari/537.36 ' +
+                      'Edg/79.0.309.43',
+        'Authorization': f'Bearer {web.api_key_daac}'
+    }
+    url = make_url_daac(name, web.url_daac)
+    r = requests.head(url, headers=headers)
+    return r.ok
 
 
 def is_md5_ok(content, uuid, auth, url_dhus):

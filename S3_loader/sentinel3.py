@@ -9,7 +9,7 @@ from pathlib import Path
 from . import config
 from .checker import parse_point, parse_period, check_product_type, check_point_in_db, parse_names
 from .database import Database
-from .download import download_parallel
+from .download import download_parallel, daac_url_exists
 from .query import find_images
 
 Web = namedtuple('Web', ['url_dhus', 'auth_dhus', 'url_daac', 'api_key_daac'])
@@ -87,5 +87,9 @@ class S3Loader:
         # for alternative links Online is not an option, but sometimes 500 is returned
         pass
 
-    def is_on_daac(self):
-        pass
+    def is_on_daac(self, product_type, period=None, names=None):
+        db = Database(self.db_path)
+        uuids_names = db.select_uuids_names(product_type, period, names)
+        for uuid, name in uuids_names:
+            if daac_url_exists(name, self.web):
+                db.set_on_daac(product_type, uuid)
