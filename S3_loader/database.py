@@ -68,17 +68,16 @@ class Database:
                 """
             )
 
-    # def set_loaded(self, load_path, product_type):
-    #     # ids = [self.get_prod_id_from_name(x[:-5], instrument) for x in os.listdir(load_path)]  # cut .SEN3 == os.path.splittext()[0]
-    #     with self.conn:
-    #         self.c.execute(
-    #             f"""
-    #             UPDATE products_{product_type}
-    #             SET loaded = 1
-    #             WHERE prod_id in {tuple(ids + [0])}  -- to remove a warning if tuple has one element (id,)
-    #             """
-    #         )
-    #
+    def set_loaded(self, product_name, product_type):
+        with self.conn:
+            self.c.execute(
+                f"""
+                UPDATE {product_type}
+                SET loaded = 1
+                WHERE name = '{product_name}' 
+                """
+            )
+
     def set_offline(self, product_type, uuid):
         with self.conn:
             self.c.execute(

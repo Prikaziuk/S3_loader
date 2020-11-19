@@ -93,6 +93,7 @@ class S3Loader:
     # TODO with s = requests.Session(), s.auth=auth(), s.get is 30% faster than individual requests.get()
 
     def set_offline(self, product_type, period=None, names=None):
+        logging.info(f'Checking if products are offline in LTA')
         db = Database(self.db_path)
         s = requests.Session()
         s.auth = self.web.auth_dhus
@@ -101,6 +102,7 @@ class S3Loader:
             url = urljoin(self.web.url_dhus, f"odata/v1/Products('{uuid}')/Online/$value")
             r = s.get(url)
             if r.ok and (r.content == b'false'):
+                logging.info(f'{_} offline')
                 db.set_offline(product_type, uuid)
 
     def is_available(self):
@@ -118,3 +120,9 @@ class S3Loader:
             logging.info(f'Checking if {name} is on DAAC')
             if s.head(url).ok:
                 db.set_on_daac(product_type, uuid)
+
+    def set_loaded(self, product_type, load_dir):
+        db = Database(self.db_path)
+        for s3path in Path(load_dir).glob('*.SEN3'):
+            product_name = s3path.name.replace('.SEN3', '')
+            db.set_loaded(product_name, product_type)
