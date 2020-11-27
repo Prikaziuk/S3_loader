@@ -5,11 +5,13 @@ from multiprocessing import Pool
 from pathlib import Path
 
 from S3_loader.image.utils import intersects
+from S3_loader.checker import parse_point
 
 logging.basicConfig(level=logging.INFO)
 
 
 def extract_dir(load_dir, point, out_dir, graph_path=None, filename='test'):
+    point = parse_point(point)
     if graph_path is None:
         graph_path = Path(__file__).parent / 'extract.xml'
     assert Path(graph_path).exists(), f'extraction .xml not found at {graph_path}'
