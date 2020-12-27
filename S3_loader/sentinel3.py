@@ -12,7 +12,7 @@ import requests
 from . import config
 from .checker import parse_point, parse_period, check_product_type, check_point_in_db, parse_names
 from .database import Database
-from .download import download_parallel, make_url_daac
+from .download import download_parallel, make_url_daac, get_orbits
 from .query import find_images
 
 Web = namedtuple('Web', ['url_dhus', 'auth_dhus', 'url_daac', 'api_key_daac'])
@@ -63,7 +63,7 @@ class S3Loader:
         db.close()
         logging.info(f'Images successfully inserted into {product_type} table of {self.db_path}')
 
-    def download(self, product_type, load_dir=None, names=None, period=None, parallel=False):
+    def download(self, product_type, load_dir=None, names=None, period=None, parallel=False, orbits=True):
         check_product_type(product_type)
         if period is not None:
             period = parse_period(period)
@@ -80,6 +80,10 @@ class S3Loader:
             if names is not None:
                 err_msg += f', names did not match any of the {len(names)} product names provided'
             raise Exception(err_msg)
+
+        if orbits:
+            uuids_names = get_orbits(uuids_names)
+
         logging.info(f'Found {len(uuids_names)} products to download. Expected different number - redo the query')
 
         if load_dir is None:

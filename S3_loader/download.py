@@ -2,6 +2,7 @@ import hashlib
 import io
 import logging
 import zipfile
+from collections import Counter
 from datetime import datetime
 from multiprocessing import Pool
 from pathlib import Path
@@ -129,3 +130,11 @@ def chunks_of_n(lst, n):
     """
     for i in range(0, len(lst), n):
         yield lst[i:i + n]
+
+
+def get_orbits(uuids_names):
+    orbits = [int(x[1][73:76]) for x in uuids_names]
+    frequent_orbits = {k: v for k, v in Counter(orbits).items() if v > 1}
+    uuids_names_o = [uuids_names[orbits.index(x)] for x in frequent_orbits]
+    logging.info(f'Found {len(uuids_names_o)} frequent orbits')
+    return uuids_names_o
