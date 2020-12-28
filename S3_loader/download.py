@@ -17,6 +17,7 @@ logger = logging.getLogger()
 
 URL_DHUS = 'https://scihub.copernicus.eu/dhus/'
 URL_DAAC = 'https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/450/'
+ORBIT_NUMBER = slice(73, 76)
 
 
 def download_parallel(uuids_names, load_dir_path, web, parallel=False):
@@ -133,7 +134,7 @@ def chunks_of_n(lst, n):
 
 
 def get_orbits(uuids_names):
-    orbits = [int(x[1][73:76]) for x in uuids_names]
+    orbits = [int(name[ORBIT_NUMBER]) for _, name in uuids_names]
     frequent_orbits = {k: v for k, v in Counter(orbits).items() if v > 1}
     uuids_names_o = [uuids_names[orbits.index(x)] for x in frequent_orbits]
     logging.info(f'Found {len(uuids_names_o)} frequent orbits')
