@@ -14,4 +14,5 @@ Welcome to S3_loader's documentation!
    download
    extract
    gee
+   thanks
 
