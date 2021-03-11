@@ -28,6 +28,10 @@ ESA Sentinel-3 End User License Agreement should be accepted by ticking "Yes, I 
 	- offline products (Long term archive, LTA) - from LAADS DAAC (if available)
 3. Extract pixels from loaded images:
 	- ESA SNAP with Sentinel-3 toolbox is required for this operation: http://step.esa.int/main/download/snap-download/
+4. Database extras:
+	- mark offline (LTA) products
+	- mark products available at DAAC
+	- set "loaded" to avoid double download
 
 ## Output:
 - SQLite database file with tables:
@@ -38,6 +42,10 @@ ESA Sentinel-3 End User License Agreement should be accepted by ticking "Yes, I 
 - Downloaded products
 - Text files with extracted pixels
 
+## OLCI level-1: Google Earth Engine alternative
+
+Google Earth Engine can do everything that this package does [pixel extraction], but there is only OLCI level-1 collection available 
+https://code.earthengine.google.com/61fe01512385e06b5bc3f65f78bef692?noload=true
 
 ## Recommendations
 - To open an SQLite database with GUI and export tables as csv you may use https://sqlitebrowser.org

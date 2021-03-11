@@ -35,6 +35,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Step 3: extract pixels" href="extract.html" />
     <link rel="prev" title="Step 1: query for products" href="query.html" /> 
 </head>
 
@@ -82,11 +83,15 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Step 0. Set up</a></li>
 <li class="toctree-l1"><a class="reference internal" href="query.html">Step 1: query for products</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Step 2: download</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#long-therm-archive-lta">Long Therm Archive (LTA)</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="extract.html">Step 3: extract pixels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gee.html">Google Earth Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thanks.html">Acknowledgements</a></li>
 </ul>
 
             
@@ -154,11 +159,49 @@
             
   <div class="section" id="step-2-download">
 <h1>Step 2: download<a class="headerlink" href="#step-2-download" title="Permalink to this headline">¶</a></h1>
-<p>When the database is filled you can select products from it to download.</p>
+<p>When the database is filled (see Step 1) you can select products from it to download.</p>
+<p>Establish the database connection</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">S3_loader</span> <span class="kn">import</span> <span class="n">S3Loader</span>
+<span class="n">api</span> <span class="o">=</span> <span class="n">S3Loader</span><span class="p">(</span><span class="n">db_path</span><span class="o">=</span><span class="n">DATABASE_PATH</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>There are various options to select products from database for download.</p>
+<ol class="arabic simple">
+<li><p>By dates</p></li>
+</ol>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">load_dir</span> <span class="o">=</span> <span class="s1">&#39;example&#39;</span>  <span class="c1"># [optional] if None =&gt; load_dir == product_type</span>
+<span class="n">period</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;2021-01-25&#39;</span><span class="p">,</span> <span class="s1">&#39;2021-01-26&#39;</span><span class="p">)</span>  <span class="c1"># notice this is one day: 25th of January 2021</span>
+<span class="n">api</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">PRODUCT_TYPE</span><span class="p">,</span> <span class="n">load_dir</span><span class="o">=</span><span class="n">load_dir</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="n">period</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>By names</p></li>
+</ol>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;S3A_OL_1_EFR____20210212T102851_20210212T103151_20210213T155710_0179_068_222_1980_LN1_O_NT_002&#39;</span><span class="p">]</span>
+<span class="n">api</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">PRODUCT_TYPE</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Only the frequent orbits (~27 products). May be used to augment Google Earth Engine dataset for observation angles</p></li>
+</ol>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">api</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">PRODUCT_TYPE</span><span class="p">,</span> <span class="n">orbits</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p>All products in the database (better in parallel)</p></li>
+</ol>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">api</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">PRODUCT_TYPE</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Once the download is completed, it is a good idea to set loaded = 1 in the database to avoid downloading it again</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">load_dir</span> <span class="o">=</span> <span class="s1">&#39;example&#39;</span>
+<span class="n">api</span><span class="o">.</span><span class="n">set_loaded</span><span class="p">(</span><span class="n">PRODUCT_TYPE</span><span class="p">,</span> <span class="n">load_dir</span><span class="o">=</span><span class="s1">&#39;example&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 <div class="section" id="long-therm-archive-lta">
 <h2>Long Therm Archive (LTA)<a class="headerlink" href="#long-therm-archive-lta" title="Permalink to this headline">¶</a></h2>
-<p>We found an alternative source of OLCI level-1 products - LDAAC.
-They have also SLSTR level-1, feel free to change the DHUS_URL and enjoy.</p>
+<p>We found an alternative source of OLCI level-1 products - LDAAC.</p>
+<p>They also have SLSTR level-1, feel free to change the DHUS_URL and enjoy.</p>
 </div>
 </div>
 
@@ -169,6 +212,8 @@ They have also SLSTR level-1, feel free to change the DHUS_URL and enjoy.</p>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="extract.html" class="btn btn-neutral float-right" title="Step 3: extract pixels" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="query.html" class="btn btn-neutral float-left" title="Step 1: query for products" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

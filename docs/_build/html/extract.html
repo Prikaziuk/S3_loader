@@ -83,10 +83,12 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Step 0. set up</a></li>
 <li class="toctree-l1"><a class="reference internal" href="query.html">Step 1: query for products</a></li>
 <li class="toctree-l1"><a class="reference internal" href="download.html">Step 2: download</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Step 3: extract pixels</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gee.html">Google Earth Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thanks.html">Acknowledgements</a></li>
 </ul>
 
             
@@ -154,7 +156,24 @@
             
   <div class="section" id="step-3-extract-pixels">
 <h1>Step 3: extract pixels<a class="headerlink" href="#step-3-extract-pixels" title="Permalink to this headline">¶</a></h1>
-<p>We use SNAP graph processing tool from command line / terminal.</p>
+<p>For this operation Sentinel Application Platform (SNAP) with Sentinel-3 toolbox is required <a class="reference external" href="http://step.esa.int/main/download/snap-download/">http://step.esa.int/main/download/snap-download/</a></p>
+<p>We use SNAP graph processing tool (gpt) from command line / terminal.</p>
+<p>The xml-graphs used by gpt are located in <code class="docutils literal notranslate"><span class="pre">S3_loader/image</span></code>, the default graph is <code class="docutils literal notranslate"><span class="pre">extract.xml</span></code></p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">S3_loader.image.extract_pixels</span> <span class="kn">import</span> <span class="n">extract_dir</span>
+
+<span class="n">load_dir</span> <span class="o">=</span> <span class="s1">&#39;example&#39;</span>
+<span class="n">out_dir</span> <span class="o">=</span> <span class="s1">&#39;example_extracted&#39;</span>
+<span class="n">extract_dir</span><span class="p">(</span><span class="n">load_dir</span><span class="p">,</span> <span class="n">POINT</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;prefix&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Will produce the standard SNAP Pixels extraction tool files in <code class="docutils literal notranslate"><span class="pre">out_dir</span></code></p>
+<p><strong>prefix_OL_1_EFR_measurements.txt</strong> - with band values per POINT</p>
+<p><strong>prefix_productIdMap.txt</strong> - with system location (names) of products</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The code will run in parallel (multiprocessing.Pool(5)) if there are more than 100 products, the files will be named
+prefix_0_0, prefix_0_1…</p>
+</div>
 </div>
 
 

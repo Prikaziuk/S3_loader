@@ -10,6 +10,7 @@ Welcome to S3_loader's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   setup
    query
    download
    extract
