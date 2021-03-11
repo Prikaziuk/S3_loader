@@ -13,7 +13,7 @@ Point = namedtuple('Point', ['lat', 'lon'])
 
 
 def check_product_type(product_type):
-    assert product_type in PRODUCT_TYPES, f'product type {product_type} is not one of acceptable {PRODUCT_TYPES}'
+    assert product_type in PRODUCT_TYPES, f'product type {product_type} is not one of the acceptable {PRODUCT_TYPES}'
 
 
 def parse_period(period):

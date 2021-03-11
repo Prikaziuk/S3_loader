@@ -16,7 +16,7 @@ DOWNLOAD_TIMEOUT = 900
 SEC_2_MIN = 1 / 60
 
 
-def get_request(url, auth, tmp_path=None, headers=None):
+def get_request(url, auth, tmp_path=None, headers=None, request_timeout=REQUEST_TIMEOUT):
     start_f = time.time()
     loaded = None
     tried = 0
@@ -27,12 +27,12 @@ def get_request(url, auth, tmp_path=None, headers=None):
         start = time.time()
         try:
             if headers is None:  # because query or md5 were asked
-                r = requests.get(url, auth=auth, stream=True, timeout=REQUEST_TIMEOUT)
+                r = requests.get(url, auth=auth, stream=True, timeout=request_timeout)
             else:
-                r = requests.get(url, headers=headers, stream=True, timeout=REQUEST_TIMEOUT)
+                r = requests.get(url, headers=headers, stream=True, timeout=request_timeout)
             if not r.ok:
                 if r.status_code == 401:
-                    logger.critical('401 UNAUTHORIZED. Did you provide valid credentials in -a parameter?')
+                    logger.critical('401 UNAUTHORIZED. Did you provide valid credentials in config.py?')
                     exit(-1)
                 if r.status_code == 500:
                     logger.critical('Internal server error. Rethrowing is useless')
@@ -45,15 +45,19 @@ def get_request(url, auth, tmp_path=None, headers=None):
                 continue
             if tmp_path is not None:
                 os.makedirs(os.path.dirname(tmp_path), exist_ok=True)
+                i = 0
                 with open(tmp_path, 'wb') as tmp:
                     for chunk in r.iter_content(chunk_size=1024):
                         # if chunk:  # filter out keep-alive new chunks
                         tmp.write(chunk)
+                        if i % 10000 == 0:
+                            print('.', end='')
                         if time.time() - start > DOWNLOAD_TIMEOUT:
                             r.close()
                             logger.warning('Custom timeout on download {}'.format(tried))
                             timeout = True
                             break
+                        i += 1
         except Exception as e:  # may be (requests.exceptions.Timeout, requests.exceptions.ConnectionError)
             passed = time.time() - start
             logger.warning('Exception: {}; {} seconds passed, retrying...'.

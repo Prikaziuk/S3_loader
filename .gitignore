@@ -2,6 +2,6 @@
 **/__pycache__/
 **/
 *.db
-S3_loader/config.py
+S3_loader/config_my.py
 /*.py
 *.xml

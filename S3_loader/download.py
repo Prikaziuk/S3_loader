@@ -18,6 +18,7 @@ logger = logging.getLogger()
 URL_DHUS = 'https://scihub.copernicus.eu/dhus/'
 URL_DAAC = 'https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/450/'
 ORBIT_NUMBER = slice(73, 76)
+MIN_ORBIT_FREQUENCY = 2
 
 
 def download_parallel(uuids_names, load_dir_path, web, parallel=False):
@@ -67,7 +68,7 @@ def download_single_product(uuid, name, load_dir_path, tmp_path, web):
                 'Authorization': f'Bearer {web.api_key_daac}'
             }
             url = make_url_daac(name, web.url_daac)
-            content, tried = get_request(url, auth=None, tmp_path=tmp_path, headers=headers)
+            content, tried = get_request(url, auth=None, tmp_path=tmp_path, headers=headers, request_timeout=10)
         else:
             logger.warning('DAAC API key was not provided, can not use the alternative DAAC mirror ' +
                            f'to download the offline {name} product')
@@ -135,7 +136,10 @@ def chunks_of_n(lst, n):
 
 def get_orbits(uuids_names):
     orbits = [int(name[ORBIT_NUMBER]) for _, name in uuids_names]
-    frequent_orbits = {k: v for k, v in Counter(orbits).items() if v > 1}
+    frequent_orbits = {k: v for k, v in Counter(orbits).items() if v >= MIN_ORBIT_FREQUENCY}
     uuids_names_o = [uuids_names[orbits.index(x)] for x in frequent_orbits]
+    if len(uuids_names_o) == 0:
+        raise Exception('Found 0 frequent orbits. The database is incomplete?' +
+                        'Did you actually want to download only the most frequent orbits?')
     logging.info(f'Found {len(uuids_names_o)} frequent orbits')
     return uuids_names_o

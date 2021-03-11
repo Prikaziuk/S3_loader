@@ -10,10 +10,13 @@ from urllib.parse import urljoin
 import requests
 
 from . import config
+from . import config_my as config
 from .checker import parse_point, parse_period, check_product_type, check_point_in_db, parse_names
 from .database import Database
 from .download import download_parallel, make_url_daac, get_orbits
 from .query import find_images
+
+logging.basicConfig(level=logging.INFO)
 
 Web = namedtuple('Web', ['url_dhus', 'auth_dhus', 'url_daac', 'api_key_daac'])
 
@@ -35,6 +38,8 @@ class S3Loader:
 
     def __init__(self, db_path):
         self.db_path = db_path
+        if config.AUTH[0] == 'DHUS_username':
+            raise Exception(f'Please, replace placeholders with valid Copernicus credentials in S3_Loader/config.py')
         self.web = Web(url_dhus=self.URL_DHUS, auth_dhus=config.AUTH,
                        url_daac=self.URL_DAAC, api_key_daac=config.DAAC_API_KEY)
 
@@ -63,7 +68,7 @@ class S3Loader:
         db.close()
         logging.info(f'Images successfully inserted into {product_type} table of {self.db_path}')
 
-    def download(self, product_type, load_dir=None, names=None, period=None, parallel=False, orbits=True):
+    def download(self, product_type, load_dir=None, names=None, period=None, parallel=False, orbits=False):
         check_product_type(product_type)
         if period is not None:
             period = parse_period(period)
@@ -82,6 +87,10 @@ class S3Loader:
             raise Exception(err_msg)
 
         if orbits:
+            if period is not None:
+                raise Exception('period should be None to download only the frequent orbits. Is orbits=True a mistake?')
+            if names is not None:
+                raise Exception('names should be None to download only the frequent orbits. Is orbits=True a mistake?')
             uuids_names = get_orbits(uuids_names)
 
         logging.info(f'Found {len(uuids_names)} products to download. Expected different number - redo the query')
@@ -125,8 +134,10 @@ class S3Loader:
             if s.head(url).ok:
                 db.set_on_daac(product_type, uuid)
 
-    def set_loaded(self, product_type, load_dir):
+    def set_loaded(self, product_type, load_dir=None):
         db = Database(self.db_path)
+        if load_dir is None:
+            load_dir = product_type
         for s3path in Path(load_dir).glob('*.SEN3'):
             product_name = s3path.name.replace('.SEN3', '')
             db.set_loaded(product_name, product_type)
