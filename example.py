@@ -1,4 +1,5 @@
 from S3_loader import S3Loader
+from S3_loader.image.extract_pixels import extract_dir
 
 
 if __name__ == '__main__':
@@ -22,14 +23,14 @@ if __name__ == '__main__':
     PRODUCT_TYPE = 'OL_1_EFR___'
     POINT = (52.251185, 5.690051)
     PERIOD = ('2021-01-19', '2021-02-13')
-    # api.query(PRODUCT_TYPE, PERIOD, POINT)
+    api.query(PRODUCT_TYPE, PERIOD, POINT)
 
     # DOWNLOAD ##############################################################
     # # once the database is created - download
     load_dir = 'example'  # if None => load_dir == product_type
     # # 1. single day
     period = ('2021-01-25', '2021-01-26')
-    # api.download(PRODUCT_TYPE, load_dir=load_dir, period=period)
+    api.download(PRODUCT_TYPE, load_dir=load_dir, period=period)
 
     # # 2. specific product
     names = ['S3A_OL_1_EFR____20210212T102851_20210212T103151_20210213T155710_0179_068_222_1980_LN1_O_NT_002']
@@ -55,14 +56,6 @@ if __name__ == '__main__':
     # SNAP BONUS
     # # extract pixels from downloaded files [ESA SNAP has to be installed]
 
-    # for form in ('nc',):  # 'nc_ortho'):
-    #     load_dir_path = out_dir_path / form
-    #     extract_dir(load_dir_path, POINT, out_dir_path, filename=f'{form}_3pix_no_proj')
-
-    # # selected files
-    # df = pd.read_csv(r"/home/prikaziuke/spe_loader/names_in_25rmse.csv")
-    # crs = '32631'
-    # df = df[df.crs.str.endswith(crs)]
-    # sources_lst = [x for x in df.ProductLocation]
-    # out_dir_path = Path(r'/home/prikaziuke/spe_loader/formats')
-    # extract_dir(sources_lst, POINT, out_dir_path, filename='native')
+    # load_dir = PRODUCT_TYPE
+    # out_dir = 'example_extracted'
+    # extract_dir(load_dir, POINT, out_dir, filename='example')

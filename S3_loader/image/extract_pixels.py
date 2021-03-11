@@ -16,9 +16,9 @@ def extract_dir(load_dir, point, out_dir, graph_path=None, filename='test'):
         graph_path = Path(__file__).parent / 'extract.xml'
     assert Path(graph_path).exists(), f'extraction .xml not found at {graph_path}'
     if isinstance(load_dir, list):
-        sources_lst = load_dir
+        sources_lst = [Path(x).absolute().as_posix() for x in load_dir]
     else:
-        sources_lst = [x.as_posix() for x in Path(load_dir).glob('*') if intersects(x, point)]
+        sources_lst = [x.absolute().as_posix() for x in Path(load_dir).glob('*.SEN3') if intersects(x, point)]
     if len(sources_lst) == 0:
         logging.info(f'No intersection for {filename}')
         return

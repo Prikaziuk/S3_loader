@@ -10,7 +10,7 @@ from urllib.parse import urljoin
 import requests
 
 from . import config
-from . import config_my as config
+# from . import config_my as config
 from .checker import parse_point, parse_period, check_product_type, check_point_in_db, parse_names
 from .database import Database
 from .download import download_parallel, make_url_daac, get_orbits
