@@ -11,6 +11,7 @@ This script automates the per-point search and download of ESA Sentinel-3 images
 - dates of acquisition
 - coordinates of a point
 
+```See example.py for details```
 
 ## Credentials
 DHUS and DAAC require authorization  that should be provided in ``S3_loader/config.py`` next to the rest of the code:
@@ -28,6 +29,7 @@ ESA Sentinel-3 End User License Agreement should be accepted by ticking "Yes, I 
 	- offline products (Long term archive, LTA) - from LAADS DAAC (if available)
 3. Extract pixels from loaded images:
 	- ESA SNAP with Sentinel-3 toolbox is required for this operation: http://step.esa.int/main/download/snap-download/
+	- shapely package (for Windows from wheel is recommended) https://www.lfd.uci.edu/~gohlke/pythonlibs/#shapely
 4. Database extras:
 	- mark offline (LTA) products
 	- mark products available at DAAC

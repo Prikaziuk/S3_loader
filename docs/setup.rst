@@ -15,7 +15,9 @@ and **replacement of DAAC_API_KEY = 'DAAC-API-KEY' in** ``S3_loader/config.py`` 
 Optional
 ---------
 
-For pixel extraction Sentinel Application Platform (SNAP) with Sentinel-3 toolbox is required http://step.esa.int/main/download/snap-download/
+For pixel extraction
+    - Sentinel Application Platform (SNAP) with Sentinel-3 toolbox is required http://step.esa.int/main/download/snap-download/
+    - shapely package (for Windows from wheel is recommended) https://www.lfd.uci.edu/~gohlke/pythonlibs/#shapely
 
 All operations require database connection, to view the SQLite database with GUI and export tables as csv you may use https://sqlitebrowser.org
 

@@ -1,5 +1,4 @@
 from S3_loader import S3Loader
-from S3_loader.image.extract_pixels import extract_dir
 
 
 if __name__ == '__main__':
@@ -53,9 +52,14 @@ if __name__ == '__main__':
     # load_dir = 'example'
     # api.set_loaded(PRODUCT_TYPE, load_dir)
 
-    # SNAP BONUS
-    # # extract pixels from downloaded files [ESA SNAP has to be installed]
-
+    """
+    SNAP BONUS
+    extract pixels from the downloaded files 
+    Required:
+        - ESA SNAP with Sentinel-3 toolbox is required http://step.esa.int/main/download/snap-download/ 
+        - shapely package (for Windows from wheel is recommended) https://www.lfd.uci.edu/~gohlke/pythonlibs/#shapely
+    """
+    # from S3_loader.image.extract_pixels import extract_dir
     # load_dir = PRODUCT_TYPE
     # out_dir = 'example_extracted'
     # extract_dir(load_dir, POINT, out_dir, filename='example')
