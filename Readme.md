@@ -54,7 +54,7 @@ https://code.earthengine.google.com/61fe01512385e06b5bc3f65f78bef692?noload=true
 - To download other Sentinel-1 and Sentinel-2 images you may use https://github.com/sentinelsat/sentinelsat
 - Images from LTA are also (partially) available through Data and Information Access Services (DIAS) https://www.copernicus.eu/en/access-data/dias
 
-
+The code was used in (Prikaziuk, Yang en Van der Tol, 2021) https://doi.org/10.3390/rs13061098
 
 
 
