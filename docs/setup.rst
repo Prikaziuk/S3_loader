@@ -4,6 +4,12 @@ Step 0. set up
 Required
 ----------
 
+Requests python package to perform web queries https://requests.readthedocs.io/en/master/user/install/
+
+.. code-block:: bash
+
+    python -m pip install requests
+
 This code does requests to Copernicus Open Access Data Hub Service (DHUS) which requires authorization.
 To be able to do anything with it you have to register on https://scihub.copernicus.eu/dhus/#/home
 and **replace AUTH = ('DHUS_username', 'DHUS_password') in** ``S3_loader/config.py`` **with that credentials**.

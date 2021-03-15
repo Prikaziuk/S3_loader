@@ -6,6 +6,10 @@ This script automates the per-point search and download of ESA Sentinel-3 images
 - Copernicus Open Access Data Hub Service (DHUS) https://scihub.copernicus.eu/dhus (European Space Agency, ESA)
 - Level-1 and Atmosphere Archive & Distribution System Distributed Active Archive Center (LAADS DAAC) https://ladsweb.modaps.eosdis.nasa.gov (National Aeronautics and Space Administration, NASA)
 
+## Requirements
+
+```python -m pip install requests``` requests library https://requests.readthedocs.io/en/master/user/install/
+
 ## Input:
 - product type
 - dates of acquisition
