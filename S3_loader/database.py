@@ -55,6 +55,10 @@ class Database:
                 q += f" AND name IN {tuple(names)}"
         elif names is not None:
             q += f" WHERE name IN {tuple(names)}"
+        if 'WHERE' in q:
+            q += " AND loaded IS NULL"
+        else:
+            q += " WHERE loaded IS NULL"
         self.c.execute(q)
         return self.c.fetchall()
 

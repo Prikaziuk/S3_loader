@@ -79,12 +79,14 @@ class S3Loader:
         uuids_names = db.select_uuids_names(product_type, period, names)
         db.close()
         if len(uuids_names) == 0:
-            err_msg = f'no products found in the database table {product_type} (==product type)'
+            err_msg = f'no non-loaded products found in the database table {product_type} (==product type)'
             if period is not None:
                 err_msg += f' for the period {period}'
             if names is not None:
                 err_msg += f', names did not match any of the {len(names)} product names provided'
-            raise Exception(err_msg)
+            err_msg += '\nquiting...'
+            logging.warning(err_msg)
+            return
 
         if orbits:
             if period is not None:
