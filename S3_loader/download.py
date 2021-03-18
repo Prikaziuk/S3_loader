@@ -20,6 +20,12 @@ URL_DAAC = 'https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/450/'
 ORBIT_NUMBER = slice(73, 76)
 MIN_ORBIT_FREQUENCY = 2
 
+DAAC_PRODUCTS = [
+    'OL_1_EFR___', 'OL_1_ERR___',
+    'SL_1_RBT___',
+    'SY_2_SYN___'
+]
+
 
 def download_parallel(uuids_names, load_dir_path, web, parallel=False):
     tmp_path1 = load_dir_path / 'tmp'
@@ -57,7 +63,8 @@ def download_single_product(uuid, name, load_dir_path, tmp_path, web):
     if (not online) or (content is None):
         if online is False:
             logger.warning(f'Product {name} is offline in ESA Long term archive LTA')
-        if web.api_key_daac:
+        on_daac = len([x for x in DAAC_PRODUCTS if x in name])
+        if web.api_key_daac and on_daac:
             logger.info(f'Started downloading {name} from DAAC')
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' +
@@ -70,8 +77,12 @@ def download_single_product(uuid, name, load_dir_path, tmp_path, web):
             url = make_url_daac(name, web.url_daac)
             content, tried = get_request(url, auth=None, tmp_path=tmp_path, headers=headers, request_timeout=10)
         else:
-            logger.warning('DAAC API key was not provided, can not use the alternative DAAC mirror ' +
-                           f'to download the offline {name} product')
+            if not on_daac:
+                msg = 'The product is not available at DAAC, '
+            else:
+                msg = 'DAAC API key was not provided, '
+            msg += f'can not use the alternative DAAC mirror to download the offline {name} product'
+            logger.warning(msg)
             return loaded
     if Path(tmp_path).exists():
         Path(tmp_path).unlink()
