@@ -2,6 +2,8 @@
 
 This script automates the per-point search and download of ESA Sentinel-3 images.
 
+An interactive documentation can be found on https://s3-loader.readthedocs.io/
+
 ## Sources of data: 
 - Copernicus Open Access Data Hub Service (DHUS) https://scihub.copernicus.eu/dhus (European Space Agency, ESA)
 - Level-1 and Atmosphere Archive & Distribution System Distributed Active Archive Center (LAADS DAAC) https://ladsweb.modaps.eosdis.nasa.gov (National Aeronautics and Space Administration, NASA)
