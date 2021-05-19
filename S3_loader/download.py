@@ -91,8 +91,7 @@ def download_single_product(uuid, name, load_dir_path, tmp_path, web):
         return loaded
     if not is_md5_ok(content, uuid, web.auth_dhus, web.url_dhus):
         # checksums should be equal in both cases, we receive the same data
-        logger.error(f'MD5 sums were not equal for {name}, the product is not downloaded')
-        return loaded
+        logger.warning(f'MD5 sums were not equal for {name}, the product is downloaded but without any guarantee')
     z = zipfile.ZipFile(io.BytesIO(content))
     z.extractall(load_dir_path)
     logger.info(f'SUCCESSFULLY UNZIPPED AND SAVED \n {name}.SEN3 in {load_dir_path}')
