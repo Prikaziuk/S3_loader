@@ -60,6 +60,6 @@ if __name__ == '__main__':
         - shapely package (for Windows from wheel is recommended) https://www.lfd.uci.edu/~gohlke/pythonlibs/#shapely
     """
     # from S3_loader.image.extract_pixels import extract_dir
-    # load_dir = PRODUCT_TYPE
+    # # load_dir = PRODUCT_TYPE
     # out_dir = 'example_extracted'
     # extract_dir(load_dir, POINT, out_dir, filename='example')

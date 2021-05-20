@@ -12,6 +12,28 @@ An interactive documentation can be found on https://s3-loader.readthedocs.io/
 
 ```python -m pip install requests``` requests library https://requests.readthedocs.io/en/master/user/install/
 
+## Credentials
+DHUS and DAAC require authorization  that should be provided in ``S3_loader/config.py`` next to the rest of the code:
+```
+AUTH = ('username', 'password')
+DAAC_API_KEY = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'
+```
+### DAAC registration
+
+``DAAC_API_KEY`` can be generated on https://ladsweb.modaps.eosdis.nasa.gov/profile/#app-keys.
+
+Two agreements have to be accepted to activate the ``DAAC_API_KEY``:
+
+1. ESA Sentinel-3 End User License Agreement:
+	- navigate to https://urs.earthdata.nasa.gov/profile/edit
+	- scroll to the bottom
+	- tick "Yes, I Agree to ESA Sentinel-3 End User License Agreement."
+2. NASA agreement:
+	- navigate to https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/450/
+	- click on "S3A_OL_1_EFR"
+	- the page will be redirected to log-in
+
+
 ## Input:
 - product type
 - dates of acquisition
@@ -19,14 +41,6 @@ An interactive documentation can be found on https://s3-loader.readthedocs.io/
 
 ```See example.py for details```
 
-## Credentials
-DHUS and DAAC require authorization  that should be provided in ``S3_loader/config.py`` next to the rest of the code:
-```
-AUTH = ('username', 'password')
-DAAC_API_KEY = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'
-```
-``DAAC_API_KEY`` can be generated on https://ladsweb.modaps.eosdis.nasa.gov/profile/#app-keys.
-ESA Sentinel-3 End User License Agreement should be accepted by ticking "Yes, I Agree to ESA Sentinel-3 End User License Agreement." at the end of the page https://urs.earthdata.nasa.gov/profile/edit
 
 ## User steps:
 1. Query for product names and unique identifiers (uuid)
