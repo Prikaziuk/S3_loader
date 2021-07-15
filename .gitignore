@@ -1,6 +1,7 @@
 .idea/
 **/__pycache__/
 **/
+!/figures
 *.db
 S3_loader/config_my.py
 /*.py
