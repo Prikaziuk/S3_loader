@@ -16,11 +16,13 @@ An interactive documentation can be found on https://s3-loader.readthedocs.io/
 DHUS and DAAC require authorization  that should be provided in ``S3_loader/config.py`` next to the rest of the code:
 ```
 AUTH = ('username', 'password')
-DAAC_API_KEY = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'
+DAAC_API_KEY = 'very-long-chain-of-characters'  # since some time called API_TOKEN by DAAC
 ```
 ### DAAC registration
 
-``DAAC_API_KEY`` can be generated on https://ladsweb.modaps.eosdis.nasa.gov/profile/#app-keys.
+``update: since some time DAAC uses tokens, it is just a different name for API KEY``
+
+``DAAC_API_KEY`` can be generated on https://ladsweb.modaps.eosdis.nasa.gov/profiles/#generate-token-modal
 
 Two agreements have to be accepted to activate the ``DAAC_API_KEY``:
 
