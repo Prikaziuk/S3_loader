@@ -37,7 +37,7 @@ HEADERS = {
 class S3Loader:
     # URL_DHUS = 'https://colhub.met.no/'
     # URL_DHUS = 'https://coda.eumetsat.int/'
-    URL_DHUS = 'https://scihub.copernicus.eu/dhus/'
+    URL_DHUS = 'https://apihub.copernicus.eu/apihub/'
     URL_DAAC = 'https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/450/'
 
     def __init__(self, db_path):
